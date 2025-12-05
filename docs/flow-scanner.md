@@ -50,6 +50,7 @@ After scanning, you'll see a results panel with:
   - Click on a rule or severity group to expand/collapse details
 
 **Severity Levels:**
+
 - **Error:** Critical issues that should be fixed
 - **Warning:** Potential problems or risky patterns
 - **Info:** Recommendations or minor suggestions
@@ -58,6 +59,7 @@ Exemple of a scan result:
 ![image](https://github.com/user-attachments/assets/0a1879e1-ee4f-489b-970c-785fe8ed083f)
 
 **No Issues?**
+
 - If your flow passes all checks, you'll see a success message: "No Issues Found. Great job!"
 
 ---
@@ -82,6 +84,50 @@ You can export the scan results as a CSV file for documentation or sharing:
 Option page:
 ![image](https://github.com/user-attachments/assets/24e2b297-7d8f-4db8-b0dd-353fcd742e5f)
 
+---
+
+## Purging Old Flow Versions
+
+Over time, flows can accumulate many stored versions in Salesforce. Flow Scanner includes a **Purge Old Versions** feature to help you clean up obsolete versions safely.
+
+### What the Purge Feature Does
+
+- Deletes **old, non-active versions** of the current flow.
+- Optionally deletes any **Flow Interviews** (in-progress runs) related to those versions before removing the versions themselves.
+- Uses the Salesforce **Composite API**, so multiple versions and interviews are deleted efficiently in batches.
+
+### How to Use It
+
+1. Open Flow Scanner on a specific flow.
+2. In the **Flow Information** panel, look for the **Versions** value and the trash/bin button next to it.
+   - The bin button only appears if the flow has **more than one version** (there is something to purge).
+3. Click the bin button to open the **Purge Old Versions** dialog.
+4. Choose the **number of previous versions to keep** (in addition to the current version).
+5. Review the summary text telling you how many versions will be deleted and how many will be kept.
+6. Confirm the purge.
+
+Flow Scanner then:
+
+- Finds all versions older than the ones you chose to keep (plus the active version) and marks them for deletion.
+- Looks up and deletes related Flow Interviews for those versions.
+- Deletes the old versions themselves using the Tooling API.
+- Shows a **Purge Results** dialog with per-version status:
+  - Version number
+  - Flow status (Deleted/Failed)
+  - Interviews deleted (or "No interviews" if none existed)
+  - Any error message returned by Salesforce
+
+### Version Limit & Color Indicator
+
+Salesforce allows **up to 50 stored versions per flow**. To help you see how close you are to that limit, Flow Scanner displays the version count with a colored badge:
+
+- **Green**: few versions stored (far from the limit).
+- **Yellow/Orange**: moderate number of versions.
+- **Red**: near the 50-version limit.
+
+You can hover over the small **info icon** next to "Versions" to see a short explanation of the 50-version limit and what the badge color means.
+
+Using the purge feature periodically helps keep your org clean and avoids hitting the maximum number of versions for critical flows.
 
 ---
 

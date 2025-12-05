@@ -127,7 +127,7 @@ Thank you for shaping our extension's future! Your feedback makes it better.
 Contributions are welcome!
 
 Before starting developments, create a feature request and explain the goal of it and the uses cases that it addresses.
-You can check for the [open issues](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues) and [check if any help is wanted](https://github.com/tprouvot/Salesforce-Inspector-reloaded/labels/%22help%20wanted%22)
+You can check for the [open issues](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues) and [check if any help is wanted](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues?q=state%3Aopen%20label%3A%22help%20wanted%22)
 
 Before starting developments, create a feature request and explain the goal of it and the uses cases that it addresses.
 To submit a PR, please create a branch from releaseCandidate which is the work in progress next version.
@@ -191,6 +191,15 @@ Linting : to assure indentation, formatting and best practices coherence, please
 ## About
 
 By Thomas Prouvot and forked from [Søren Krabbe and Jesper Kristensen](https://github.com/sorenkrabbe/Chrome-Salesforce-inspector)
+
+## Third-Party Libraries
+
+This extension uses the following third-party libraries:
+
+- [Lightning Flow Scanner Core](https://github.com/Flow-Scanner/lightning-flow-scanner-core) - A lightweight engine for Flow metadata analysis in Node.js and browser environments (MIT License)
+- [PrismJS](https://prismjs.com/) - Lightweight, extensible syntax highlighter (MIT License)
+
+For full license details, see [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)
 
 ## License
 

@@ -1,16 +1,29 @@
 # Release Notes
 
-## Version 1.28
+## Version 2.0
 
+- `Dependencies Explorer` (contribution by [Georgi Dobrishinov](https://github.com/dobrishinov))
+- `Field Creator` Fix Text Field length defaulting to 255 [issue 923](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/923) (contribution by [DivyanshuBist](https://github.com/DivyanshuBist))
+- Fix flow scrolling feature by [Camille Guillory](https://github.com/CamilleGuillory) [issue #837](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/837)
+- `Flow Scanner` Implement 'Purge' old flow versions by [Camille Guillory](https://github.com/CamilleGuillory)
+- `Options` Add color picker for favicon color by [Camille Guillory](https://github.com/CamilleGuillory)
+- Fix Popup issue when Org is default tab [issue #988](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/988) (contribution by [juanlu-interdiscount](https://github.com/juanlu-interdiscount))
+- `Options` Fix export configuration file [issue #982](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/982) (issue by [Syamkumar Kanjiravelil Sasidharan](https://github.com/syamkumar-ks))
+- `Field Creator` Enable field creation for platform event objects [feature 954](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/954) (idea by [simagdo](https://github.com/simagdo))
+- Unfreeze User from User tab [feature #945](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/945) (contribution by [b-r-j](https://github.com/b-r-j))
+- `Users search`  now supports exclusion of inactive and portal users, supports customizable searchable fields and can be searched by profile name [feature 965](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/965) (contribution by [Thomas Malidin Delabriere](https://github.com/tmalidin33))
 - `Field Creator` UI improvement of the Options modal (contribution by [Kamil Gadawski](https://github.com/KamilGadawski))
 - `Field Creator` Permission dependency improvement [feature 931](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/931) (contribution by [DivyanshuBist](https://github.com/DivyanshuBist))
 - Enable custom banner text on Sandbox banner
 - `Flow Scanner` Allow users to scan their flows based on default or customized rules (lib from Lightning Flow Scanner) contribution by [Camille Guillory](https://github.com/CamilleGuillory)
 - `Data Export` Allow users to reorganize and edit query tabs names [feature 950](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/950) request by [Scott Shapiro](https://github.com/sshapiro-articulate)
 - `Show All Data` Support keyboard shortcut to save edited record values [feature 951](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/951) request by [Mohak Gaur](https://github.com/mohakgaurrr)
+- `Documentation` Revised instructions for creating an External Client App, reflecting the deprecation of Connected Apps and added detailed steps for OAuth configuration and known issues related to Incognito mode [bug 962](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/962) (contribution by [Thomas Malidin Delabriere](https://github.com/tmalidin33))
+- `Authentication` Implement OAuth 2.0 Web Server Flow with [Proof Key for Code Exchange (PKCE)](https://help.salesforce.com/s/articleView?id=xcloud.remoteaccess_pkce.htm&type=5) for orgs with API Access Control enabled - [feature 873](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/873) (contribution by [Mehdi Cherfaoui](https://github.com/mehdicherf))
 
 ## Version 1.27
 
+- `Data Export` Query tab loses changes after using field autocomplete and switching tabs (issue by [Henri Vilminko](https://github.com/hvilminko))
 - Fix gauge display and text when limits are exceeded [issue #943](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/943) (contribution by [Sylvain Enguerand](https://github.com/Annubis45))
 - Open the Debug Logs from the Data Export page (contribution by [Marko Vuković](https://github.com/MarkoVukovic))
 - Fix sandbox banner colorization for Winter 26 changes
@@ -30,6 +43,7 @@
 - Fix issue with the sorting of child components in Download Metadata
 - Add Agentforce integration to generate SOQL queries in Data Export [feature 850](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/850)
 - Add option for SOQL query typo removal in Data Export [feature 844](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/844) and [feature 849](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/849)
+- Refactor field-creator api calls to match with extension standards
 - Remove the exclusion of InstalledPackage in Download Metadata page [feature 641](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/641) request by [yuandake](https://github.com/yuandake)
 - Create, Edit and Delete custom shortcuts links in Options page [feature 102](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/102)
 - Fix empty lines in picklist values causing deployment errors in Field Creator [issue 787](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/787) (contribution by [Vivek Sharma](https://github.com/vicky773h))
@@ -48,7 +62,8 @@
 
 ## Version 1.26
 
-- Refactor field-creator api calls to match with extension standards
+- Fix popup button is not displayed after chrome update [issue 855](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/855)
+- Fix issue with the sorting of child components in Download Metadata
 - Fix ' character search in the popup Users tab [issue 799](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/799) by [Josue Ramirez](https://github.com/jramirez6964)
 - Support Custom Channels in Event Monitor [feature 797](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/797) (idea by [Mehdi Cherfaoui](https://github.com/mehdicherf))
 - `Event Monitor` : fix text selection in PlatformEvent payload, persist replayId in url and deduplicate events received
