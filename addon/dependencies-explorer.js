@@ -1,5 +1,7 @@
 /* global React ReactDOM */
 import {sfConn, apiVersion} from "./inspector.js";
+import {UserInfoModel, createSpinForMethod} from "./utils.js";
+import {PageHeader} from "./components/PageHeader.js";
 /* global initButton */
 
 // Configuration constants
@@ -270,7 +272,7 @@ class Model {
     this.sfLink = "https://" + sfHost;
     this.spinnerCount = 0;
     this.title = "Dependencies Explorer";
-    this.userInfo = "...";
+    this.orgName = this.sfHost.split(".")[0]?.toUpperCase() || "";
     this.dependencyTree = null; // Store the fetched dependency tree
     this.dependencyError = null;
     this.selectedMetadataType = CONFIG.DEFAULT_METADATA_TYPE; // Default metadata type
@@ -285,15 +287,15 @@ class Model {
     this._excludeExternalPackages = CONFIG.DEFAULT_EXCLUDE_EXTERNAL_PACKAGES; // Track whether to exclude external package items
     this._showFlatView = CONFIG.DEFAULT_SHOW_FLAT_VIEW; // Track whether to show flat or nested view
     this.includeManagedInPackageXml = false; // Track whether to include managed package items in package.xml
-    sfConn.soap(sfConn.wsdl(apiVersion, "Partner"), "getUserInfo", {}).then(res => {
-      this.userInfo = res.userFullName + " / " + res.userName + " / " + res.organizationName;
-      // Load initial metadata items for ApexClass
-      this._loadAvailableMetadataItems();
-    }).catch(err => {
-      console.error("Error getting user info:", err);
-      this.userInfo = "Error loading user info";
-      this._loadAvailableMetadataItems();
-    });
+
+    // Initialize spinFor method
+    this.spinFor = createSpinForMethod(this);
+
+    // Initialize user info model - handles all user-related properties
+    this.userInfoModel = new UserInfoModel(this.spinFor.bind(this));
+
+    // Load initial metadata items for ApexClass
+    this._loadAvailableMetadataItems();
   }
 
   /**
@@ -310,23 +312,6 @@ class Model {
     }
   }
 
-  /**
-   * Show the spinner while waiting for a promise.
-   * didUpdate() must be called after calling spinFor.
-   * didUpdate() is called when the promise is resolved or rejected, so the caller doesn't have to call it, when it updates the model just before resolving the promise, for better performance.
-   * @param promise The promise to wait for.
-   */
-  spinFor(promise) {
-    this.spinnerCount++;
-    promise
-      .catch(err => {
-        console.error("spinFor", err);
-      })
-      .then(() => {
-        this.spinnerCount--;
-        this.didUpdate();
-      });
-  }
 
   setMetadataType(type) {
     this.selectedMetadataType = type;
@@ -2351,23 +2336,29 @@ class App extends React.Component {
     };
 
     return h("div", {},
-      h("div", {id: "user-info"},
-        h("a", {href: model.sfLink, className: "sf-link"},
-          h("svg", {viewBox: "0 0 24 24"},
-            h("path", {d: "M18.9 12.3h-1.5v6.6c0 .2-.1.3-.3.3h-3c-.2 0-.3-.1-.3-.3v-5.1h-3.6v5.1c0 .2-.1.3-.3.3h-3c-.2 0-.3-.1-.3-.3v-6.6H5.1c-.1 0-.3-.1-.3-.2s0-.2.1-.3l6.9-7c.1-.1.3-.1.4 0l7 7v.3c0 .1-.2.2-.3.2z"})
-          ),
-          " Salesforce Home"
-        ),
-        h("h1", {className: "dep-title"}, "Dependencies Explorer"),
-        h("span", {className: "dep-subtitle"}, " / " + model.userInfo),
-      ),
+      h(PageHeader, {
+        pageTitle: "Dependencies Explorer",
+        orgName: model.orgName,
+        sfLink: model.sfLink,
+        sfHost: model.sfHost,
+        spinnerCount: model.spinnerCount,
+        ...model.userInfoModel.getProps()
+      }),
+      h("div", {
+        className: "slds-m-top_xx-large",
+        style: {
+          display: "flex",
+          flexDirection: "column",
+          height: "calc(100vh - 4rem)"
+        }
+      },
       h("div", {className: "area dep-area", id: "dependencies-area"},
         h("div", {className: "result-bar dep-result-bar"},
           h("div", {className: "dep-buttons-left"},
             h("button", {
               onClick: () => model.downloadPackageXml(),
               disabled: !model.dependencyResults || !model.dependencyResults.dependsOn.length || model.currentFilter !== "dependsOn",
-              className: "dep-btn dep-btn-success"
+              className: "slds-button slds-button_neutral"
             },
             h("span", {className: ""},
               h("svg", {
@@ -2387,7 +2378,7 @@ class App extends React.Component {
             h("button", {
               onClick: () => model.exportDependencies(),
               disabled: !model.dependencyResults || (!model.dependencyResults.dependsOn.length && !model.dependencyResults.dependedOnBy.length),
-              className: "dep-btn dep-btn-success"
+              className: "slds-button slds-button_neutral"
             },
             h("span", {className: ""},
               h("svg", {
@@ -2492,7 +2483,7 @@ class App extends React.Component {
             h("button", {
               onClick: () => model.fetchDependencies(),
               disabled: model.spinnerCount > 0 || !model.selectedMetadataItem,
-              className: "dep-btn dep-btn-primary"
+              className: "slds-button slds-button_brand"
             }, "Analyze Dependencies")
           )
         ),
@@ -2676,12 +2667,13 @@ class App extends React.Component {
           ),
           h("button", {
             onClick: () => model.toggleJsonDebug(),
-            className: "dep-footer-debug-btn",
+            className: "slds-button slds-button_neutral",
             title: model.showJsonDebug ? "Hide JSON debug data" : "Show JSON debug data"
           }, model.showJsonDebug ? "Hide JSON" : "JSON")
           )
           )
         )
+      )
       )
     );
   }
