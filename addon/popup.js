@@ -43,7 +43,7 @@ if (typeof browser === "undefined") {
       const newToken = localStorage.getItem(request.sfHost + Constants.ACCESS_TOKEN);
       if (newToken) {
         sfConn.sessionId = newToken;
-        sfConn.instanceHostname = request.sfHost;
+        init({sfHost: request.sfHost});
       }
     }
   });
