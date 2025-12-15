@@ -147,9 +147,10 @@ class App extends React.PureComponent {
     this.onContextRecordChange = this.onContextRecordChange.bind(this);
     this.updateReleaseNotesViewed = this.updateReleaseNotesViewed.bind(this);
     this.showToast = this.showToast.bind(this);
+    this.getListViewQuery = this.getListViewQuery.bind(this);
     this.hideToast = this.hideToast.bind(this);
   }
-  onContextRecordChange(e) {
+  async onContextRecordChange(e) {
     let {sfHost} = this.props;
     let limitsArg = new URLSearchParams();
     let exportArg = new URLSearchParams();
@@ -157,15 +158,14 @@ class App extends React.PureComponent {
     exportArg.set("host", sfHost);
     importArg.set("host", sfHost);
     limitsArg.set("host", sfHost);
-    if (
-      e.contextSobject
-      && localStorage.getItem("useSObjectContextOnDataImportLink") !== "false"
-    ) {
+    if (e.contextSobjectListview) {
+      const listViewQuery = await this.getListViewQuery(e.contextSobject, e.contextSobjectListview);
+      if (listViewQuery) {
+        exportArg.set("query", listViewQuery);
+      }
+    } else if (e.contextSobject && localStorage.getItem("useSObjectContextOnDataImportLink") !== "false") {
       let query = "SELECT Id FROM " + e.contextSobject;
-      if (
-        e.contextRecordId
-        && (e.contextRecordId.length == 15 || e.contextRecordId.length == 18)
-      ) {
+      if (e.contextRecordId && (e.contextRecordId.length == 15 || e.contextRecordId.length == 18)) {
         query += " WHERE Id = '" + e.contextRecordId + "'";
       }
       exportArg.set("query", query);
@@ -190,6 +190,47 @@ class App extends React.PureComponent {
       isFieldsPresent: e.data.isFieldsPresent,
     });
   }
+  async getListViewQuery(sobjectName, filterName) {
+    if (localStorage.getItem("enableListViewExport") !== "true" || !sobjectName || !filterName) {
+      return null;
+    }
+
+    try {
+      // Use Composite API to combine both requests into a single API call
+      const query = `SELECT Id FROM ListView WHERE SobjectType = '${sobjectName}' AND DeveloperName = '${filterName}' LIMIT 1`;
+      const compositePayload = {
+        allOrNone: true,
+        compositeRequest: [
+          {
+            method: "GET",
+            url: `/services/data/v${apiVersion}/query/?q=${encodeURIComponent(query)}`,
+            referenceId: "GetListViewInfo"
+          },
+          {
+            method: "GET",
+            url: `/services/data/v${apiVersion}/sobjects/${sobjectName}/listviews/@{GetListViewInfo.records[0].Id}/describe`,
+            referenceId: "DescribeTheListView"
+          }
+        ]
+      };
+
+      const compositeRes = await sfConn.rest(`/services/data/v${apiVersion}/composite`, {method: "POST", body: compositePayload});
+
+      // Check if both requests succeeded
+      if (compositeRes.compositeResponse
+            && compositeRes.compositeResponse[1]?.httpStatusCode === 200) {
+        const describeRes = compositeRes.compositeResponse[1].body;
+
+        if (describeRes.query) {
+          return describeRes.query;
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return null;
+  }
+
   updateReleaseNotesViewed(version) {
     localStorage.setItem("latestReleaseNotesVersionViewed", version);
     this.setState({
@@ -720,20 +761,20 @@ class App extends React.PureComponent {
           "div",
           {
             className:
-              "slds-grid slds-grid_vertical-align-center slds-theme_shade slds-p-horizontal_medium slds-p-vertical_xx-small slds-border_top",
+            "slds-grid slds-grid_vertical-align-center slds-theme_shade slds-p-horizontal_medium slds-p-vertical_xx-small slds-border_top",
           },
           h(
             "div",
             {
               className:
-                "slds-col slds-size_4-of-12 footer-small-text slds-m-top_xx-small",
+              "slds-col slds-size_4-of-12 footer-small-text slds-m-top_xx-small",
             },
             h(
               "a",
               {
                 href:
-                  "https://tprouvot.github.io/Salesforce-Inspector-reloaded/release-note/#version-"
-                  + addonVersion.replace(".", ""),
+                "https://tprouvot.github.io/Salesforce-Inspector-reloaded/release-note/#version-"
+                + addonVersion.replace(".", ""),
                 title: "Release note",
                 target: linkTarget,
               },
@@ -753,7 +794,7 @@ class App extends React.PureComponent {
             "div",
             {
               className:
-                "slds-col slds-size_1-of-12 slds-text-align_right slds-icon_container",
+              "slds-col slds-size_1-of-12 slds-text-align_right slds-icon_container",
               title: `Shortcut :${
                 this.isMac() ? "[ctrl+option+i]" : "[ctrl+alt+i]"
               }`,
@@ -768,7 +809,7 @@ class App extends React.PureComponent {
                 "svg",
                 {
                   className:
-                    "slds-button slds-icon_x-small slds-icon-text-default slds-m-top_xxx-small",
+                  "slds-button slds-icon_x-small slds-icon-text-default slds-m-top_xxx-small",
                   viewBox: "0 0 52 52",
                 },
                 h("use", {
@@ -782,7 +823,7 @@ class App extends React.PureComponent {
             "div",
             {
               className:
-                "slds-col slds-size_1-of-12 slds-text-align_right slds-icon_container",
+              "slds-col slds-size_1-of-12 slds-text-align_right slds-icon_container",
               title: "Donate",
             },
             h(
@@ -795,7 +836,7 @@ class App extends React.PureComponent {
                 "svg",
                 {
                   className:
-                    "slds-button slds-icon_x-small slds-icon-text-default slds-m-top_xxx-small",
+                  "slds-button slds-icon_x-small slds-icon-text-default slds-m-top_xxx-small",
                   viewBox: "0 0 52 52",
                 },
                 h("use", {
@@ -809,7 +850,7 @@ class App extends React.PureComponent {
             "div",
             {
               className:
-                "slds-col slds-size_1-of-12 slds-text-align_right slds-icon_container",
+              "slds-col slds-size_1-of-12 slds-text-align_right slds-icon_container",
               title: "Documentation",
             },
             h(
@@ -822,7 +863,7 @@ class App extends React.PureComponent {
                 "svg",
                 {
                   className:
-                    "slds-button slds-icon_x-small slds-icon-text-default slds-m-top_xxx-small",
+                  "slds-button slds-icon_x-small slds-icon-text-default slds-m-top_xxx-small",
                   viewBox: "0 0 52 52",
                 },
                 h("use", {
@@ -837,7 +878,7 @@ class App extends React.PureComponent {
             {
               id: "optionsBtn",
               className:
-                "slds-col slds-size_1-of-12 slds-text-align_right slds-icon_container slds-m-right_small",
+              "slds-col slds-size_1-of-12 slds-text-align_right slds-icon_container slds-m-right_small",
               title: "Options",
             },
             h(
@@ -851,7 +892,7 @@ class App extends React.PureComponent {
                 "svg",
                 {
                   className:
-                    "slds-button slds-icon_x-small slds-icon-text-default slds-m-top_xxx-small",
+                  "slds-button slds-icon_x-small slds-icon-text-default slds-m-top_xxx-small",
                   viewBox: "0 0 52 52",
                 },
                 h("use", {
@@ -929,10 +970,12 @@ class AllDataBox extends React.PureComponent {
       let recordId = getRecordId(contextUrl);
       let path = getSfPathFromUrl(contextUrl);
       let sobject = getSobject(contextUrl);
+      let sobjectListview = getSobjectListview(contextUrl);
       let context = {
         contextRecordId: recordId,
         contextPath: path,
         contextSobject: sobject,
+        contextSobjectListview: sobjectListview,
       };
       this.setState(context);
       onContextRecordChange(context);
@@ -4644,6 +4687,16 @@ function getSobject(href) {
     if (match) {
       return match[1];
     }
+  }
+  return null;
+}
+
+function getSobjectListview(href) {
+  const match = href
+    ? href.match(/\/lightning\/o\/([^/]+)\/list\?filterName=([^&]+)/)
+    : null;
+  if (match) {
+    return match[2]; // Return the filterName
   }
   return null;
 }

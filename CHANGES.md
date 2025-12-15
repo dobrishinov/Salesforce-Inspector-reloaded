@@ -2,6 +2,7 @@
 
 ## Version 2.0
 
+- `Data Export` Auto-populate SOQL editor from Salesforce List View context [feature 969](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/969) (request and contribution by [Temam Abdelkrim](https://github.com/KRIMOD)) and [feature 817](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/817) (request by [Nicolas Vuillamy](https://github.com/nvuillam))
 - `Data Export` Prevent popup actions menu for Aggregate result [feature #663](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/663) (contribution by [Phanidra Mangipudi](https://github.com/thephani))
 - `Flow Scanner` Implement Agentforce feature to describe a flow and its components
 - `Field Creator` Fix Text Field length defaulting to 255 [issue 923](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/923) (contribution by [DivyanshuBist](https://github.com/DivyanshuBist))
