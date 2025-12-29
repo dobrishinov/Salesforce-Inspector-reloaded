@@ -3287,6 +3287,31 @@ class UserDetails extends React.PureComponent {
       .catch((err) => this.showErrorToast("User Unfreeze", err));
   }
 
+  async resetUserPassword(user) {
+    // Disable the button immediately
+    this.setState({
+      [`resetPasswordDisabled_${user.Id}`]: true
+    });
+
+    try {
+      await sfConn.rest(
+        `/services/data/v${apiVersion}/sobjects/User/${user.Id}/password`,
+        {method: "DELETE"}
+      );
+      this.showSuccessToast(
+        "Success",
+        "Password reset successfully"
+      );
+    } catch (err) {
+      console.error("Error during password reset", err);
+      this.showErrorToast("Password Reset");
+      // Re-enable button on error so user can retry
+      this.setState({
+        [`resetPasswordDisabled_${user.Id}`]: false
+      });
+    }
+  }
+
   toggleMenu() {
     this.refs.buttonMenu.classList.toggle("slds-is-open");
   }
@@ -3296,7 +3321,7 @@ class UserDetails extends React.PureComponent {
   }
 
   render() {
-    let {user, linkTarget} = this.props;
+    let {user, linkTarget, currentUserId} = this.props;
     return h(
       "div",
       {className: "all-data-box-inner"},
@@ -3505,25 +3530,26 @@ class UserDetails extends React.PureComponent {
             title: "Show / assign user's permission set groups",
           },
           "PSetG"
-        )
+        ),
+        displayButton("reset-password", hideButtonsOption) && user.Id !== currentUserId
+          ? h(
+            "button",
+            {
+              type: "button",
+              onClick: () => this.resetUserPassword(user),
+              className: "slds-button slds-button_neutral",
+              title: "Reset Password",
+              disabled: this.state[`resetPasswordDisabled_${user.Id}`] || false,
+            },
+            "Reset"
+          )
+          : null
       ),
       //TODO check for using icons instead of text https://www.lightningdesignsystem.com/components/button-groups/#Button-Icon-Group
       user.UserLogins?.records?.[0]?.IsFrozen
-        ? h(
-          "div",
-          {className: "user-buttons center small-font slds-m-top_x-small"},
-          h(
-            "a",
-            {
-              id: "unfreezeUser",
-              className: "slds-button slds-button_neutral",
-              onClick: () => this.unfreezeUser(user),
-            },
-            h(
-              "span",
-              {className: "slds-truncate", title: "Unfreeze User Login"},
-              "Unfreeze"
-            )
+        ? h("div", {className: "user-buttons center small-font slds-m-top_x-small"},
+          h("a", {id: "unfreezeUser", className: "slds-button slds-button_neutral", onClick: () => this.unfreezeUser(user)},
+            h("span", {className: "slds-truncate", title: "Unfreeze User Login"}, "Unfreeze")
           )
         )
         : h(
