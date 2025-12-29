@@ -1532,34 +1532,26 @@ class AllDataBoxUsers extends React.PureComponent {
     if (!selectedUserId) {
       return;
     }
-    //Optimistically attempt broad query (fullQuery) and fall back to minimalQuery to ensure some data is returned in most cases (e.g. profile cannot be queried by community users)
-    const fullQuerySelect = "SELECT Id, Name, Email, Username, UserRole.Name, Alias, LocaleSidKey, LanguageLocaleKey, IsActive, FederationIdentifier, ProfileId, Profile.Name, ContactId, IsPortalEnabled, UserPreferencesUserDebugModePref";
-    //TODO implement a try catch to remove non existing fields ProfileId or IsPortalEnabled (experience is not enabled)
-    const mediumQuerySelect = "SELECT Id, Name, Email, Username, UserRole.Name, Alias, LocaleSidKey, LanguageLocaleKey, IsActive, FederationIdentifier, ProfileId, Profile.Name, ContactId, UserPreferencesUserDebugModePref";
-    const minimalQuerySelect = "SELECT Id, Name, Email, Username, UserRole.Name, Alias, LocaleSidKey, LanguageLocaleKey, IsActive, FederationIdentifier, ContactId, UserPreferencesUserDebugModePref";
+    // Get cached field permissions
+    const hasProfileId = await this.hasFieldAccess("ProfileId");
+    const hasIsPortalEnabled = await this.hasFieldAccess("IsPortalEnabled");
+
+    // Build SELECT clause dynamically based on available fields
+    // If ProfileId is accessible, Profile.Name should also be accessible
+    let querySelect = "SELECT Id, Name, Email, Username, UserRole.Name, Alias, LocaleSidKey, LanguageLocaleKey, IsActive, FederationIdentifier, ContactId, UserPreferencesUserDebugModePref, (SELECT Id, IsFrozen FROM UserLogins LIMIT 1)";
+    if (hasProfileId) {
+      querySelect += ", ProfileId, Profile.Name";
+    }
+    if (hasIsPortalEnabled) {
+      querySelect += ", IsPortalEnabled";
+    }
+
     const queryFrom = "FROM User WHERE Id='" + selectedUserId + "' LIMIT 1";
-    const compositeQuery = {
-      "compositeRequest": [
-        {
-          "method": "GET",
-          "url": "/services/data/v" + apiVersion + "/query/?q=" + encodeURIComponent(fullQuerySelect + " " + queryFrom),
-          "referenceId": "fullData"
-        }, {
-          "method": "GET",
-          "url": "/services/data/v" + apiVersion + "/query/?q=" + encodeURIComponent(mediumQuerySelect + " " + queryFrom),
-          "referenceId": "mediumData"
-        }, {
-          "method": "GET",
-          "url": "/services/data/v" + apiVersion + "/query/?q=" + encodeURIComponent(minimalQuerySelect + " " + queryFrom),
-          "referenceId": "minimalData"
-        }
-      ]
-    };
 
     try {
       setIsLoading(true);
-      const userResult = await sfConn.rest("/services/data/v" + apiVersion + "/composite", {method: "POST", body: compositeQuery});
-      let userDetail = userResult.compositeResponse.find((elm) => elm.httpStatusCode == 200).body.records[0];
+      const userResult = await sfConn.rest("/services/data/v" + apiVersion + "/query/?q=" + encodeURIComponent(querySelect + " " + queryFrom));
+      let userDetail = userResult.records[0];
       userDetail.debugModeActionLabel = userDetail.UserPreferencesUserDebugModePref ? "Disable" : "Enable";
       //query NetworkMember only if it is a portal user (display "Login to Experience" button)
       if (userDetail.IsPortalEnabled){
@@ -1571,7 +1563,7 @@ class AllDataBoxUsers extends React.PureComponent {
       }
       await this.setState({selectedUser: userDetail});
     } catch (err) {
-      console.error("Unable to query user details with: " + JSON.stringify(compositeQuery) + ".", err);
+      console.error("Unable to query user details:", err);
     } finally {
       setIsLoading(false);
     }
