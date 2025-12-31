@@ -47,6 +47,11 @@ tokens.forEach((element) => localStorage.removeItem(element));
 Still facing the issue ? Try to connect to your org in an anonymous window (make sure you allowed the extension to run in private mode).
 If the error disappeared, clear site data to solve the issue in normal navigation.
 
+### CSV Export encoding issues in Excel
+
+If you experience recent issues when opening exported CSV files in Excel, you can disable the "Use BOM for CSV export" option in the extension settings.
+This option adds a UTF-8 Byte Order Mark (BOM) to the beginning of the file, which helps Excel correctly identify the encoding for non latin characters.
+
 ### Managed Application Installation Error
 
 When installing the default connected app when `API Access Control` is enabled, if you face the error `Managed Application Installation Error` you may have an existing connected app named `Salesforce Inspector reloaded`.

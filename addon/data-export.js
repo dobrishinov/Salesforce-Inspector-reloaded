@@ -1,6 +1,6 @@
 /* global React ReactDOM */
 import {sfConn, apiVersion} from "./inspector.js";
-import {getLinkTarget, nullToEmptyString, displayButton, PromptTemplate, Constants, UserInfoModel, createSpinForMethod, copyToClipboard} from "./utils.js";
+import {getLinkTarget, nullToEmptyString, displayButton, PromptTemplate, Constants, UserInfoModel, createSpinForMethod, copyToClipboard, downloadCsvFile} from "./utils.js";
 /* global initButton */
 import {Enumerable, DescribeInfo, initScrollTable, s} from "./data-load.js";
 import {PageHeader} from "./components/PageHeader.js";
@@ -331,11 +331,9 @@ class Model {
     copyToClipboard(JSON.stringify(this.exportedData.records, null, "  "));
   }
   downloadAsCsv(){
-    const blob = new Blob([this.exportedData.csvSerialize(this.separator)], {type: "data:text/csv;charset=utf-8,"});
-    const downloadAnchor = document.createElement("a");
-    downloadAnchor.download = `${this.autocompleteResults.sobjectName}-${new Date().toLocaleDateString()}.csv`;
-    downloadAnchor.href = window.URL.createObjectURL(blob);
-    downloadAnchor.click();
+    const csvContent = this.exportedData.csvSerialize(this.separator);
+    const filename = `${this.exportedData.records[0].attributes.type}-${new Date().toLocaleDateString()}.csv`;
+    downloadCsvFile(csvContent, filename);
   }
   deleteRecords(e) {
     let data = this.exportedData.csvSerialize(this.separator);
@@ -1970,8 +1968,8 @@ class App extends React.Component {
               ),
               h("p", {className: "slds-m-bottom_x-small"}, "Press Ctrl+Space to insert all field name autosuggestions or to load suggestions for field values."),
               h("p", {className: "slds-m-bottom_x-small"}, "Press Ctrl+Enter or F5 to execute the export."),
-              h("p", {className: "slds-m-bottom_x-small"}, "Those shortcuts can be customized in chrome://extensions/shortcuts"),
-              h("p", {}, "Supports the full SOQL language. The columns in the CSV output depend on the returned data. Using subqueries may cause the output to grow rapidly. Bulk API is not supported. Large data volumes may freeze or crash your browser.")
+              h("p", {}, "Those shortcuts can be customized in chrome://extensions/shortcuts"),
+              h("p", {className: "slds-m-bottom_x-small"}, "Supports the full SOQL language. The columns in the CSV output depend on the returned data. Using subqueries may cause the output to grow rapidly. Bulk API is not supported. Large data volumes may freeze or crash your browser.")
             ),
             h("div", {hidden: !model.showAI},
               h("h3", {className: "slds-text-heading_small slds-m-top_medium slds-m-left_xxx-small"}, "Agentforce SOQL query builder"),
