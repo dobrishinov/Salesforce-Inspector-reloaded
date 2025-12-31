@@ -94,7 +94,8 @@ class Model {
     this.apiResponse = null;
     this.canSendRequest = true;
     this.resultClass = "neutral";
-    this.request = {endpoint: "", method: "get", body: ""};
+    this.request = {endpoint: "", method: "get", body: "", headers: ""};
+    this.showHeadersEditor = false;
     this.apiList;
     this.filteredApiList;
     this.displayOptions = JSON.parse(localStorage.getItem("restExploreDisplayOptions") || "[]");
@@ -158,6 +159,43 @@ class Model {
   }
   toggleSavedOptions() {
     this.expandSavedOptions = !this.expandSavedOptions;
+  }
+  toggleHeadersEditor() {
+    this.showHeadersEditor = !this.showHeadersEditor;
+    if (this.showHeadersEditor && !this.request.headers) {
+      // Pre-populate with default headers when first opened
+      this.request.headers = this.getDefaultHeaders();
+    }
+  }
+  getDefaultHeaders() {
+    // Get default headers that can be edited
+    // Note: Sforce-Call-Options is always set by inspector.js and cannot be edited
+    // Note: Authorization/X-SFDC-Session headers are set automatically based on API type
+    const headers = [];
+    headers.push("Accept: application/json; charset=UTF-8");
+    if (this.request.body && this.request.body.length > 0) {
+      headers.push("Content-Type: application/json; charset=UTF-8");
+    }
+    return headers.join("\n");
+  }
+  parseHeaders(headersText) {
+    const headers = {};
+    if (!headersText || !headersText.trim()) {
+      return headers;
+    }
+    const lines = headersText.split("\n");
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed) continue;
+      const colonIndex = trimmed.indexOf(":");
+      if (colonIndex === -1) continue;
+      const name = trimmed.substring(0, colonIndex).trim();
+      const value = trimmed.substring(colonIndex + 1).trim();
+      if (name && value) {
+        headers[name] = value;
+      }
+    }
+    return headers;
   }
   showDescribeUrl() {
     let args = new URLSearchParams();
@@ -229,7 +267,8 @@ class Model {
     // This enables dynamic format detection based on Content-Type header
     let responseType = this.request.endpoint.startsWith("/services/async/") ? "xml" : "";
     this.request.method = this.request.method.toUpperCase();
-    this.spinFor(sfConn.rest(this.request.endpoint, {method: this.request.method, api, responseType, body: this.request.body, bodyType: "raw", progressHandler: this.autocompleteProgress, useCache: false}, true)
+    const customHeaders = this.parseHeaders(this.request.headers);
+    this.spinFor(sfConn.rest(this.request.endpoint, {method: this.request.method, api, responseType, body: this.request.body, bodyType: "raw", headers: customHeaders, progressHandler: this.autocompleteProgress, useCache: false}, true)
       .catch(err => {
         this.canSendRequest = true;
         if (shouldCalculateDuration) {
@@ -429,10 +468,21 @@ class App extends React.Component {
     this.onUpdateBody = this.onUpdateBody.bind(this);
     this.onSetQueryName = this.onSetQueryName.bind(this);
     this.onSetEndpoint = this.onSetEndpoint.bind(this);
+    this.onToggleHeadersEditor = this.onToggleHeadersEditor.bind(this);
+    this.onUpdateHeaders = this.onUpdateHeaders.bind(this);
   }
   onSelectEntry(e, list) {
     let {model} = this.props;
-    model.request = list.filter(template => template.key.toString() === e.target.value)[0];
+    const selectedRequest = list.filter(template => template.key.toString() === e.target.value)[0];
+    // Preserve headers editor state and headers if they exist
+    const currentHeaders = model.request.headers || "";
+    const showHeadersEditor = model.showHeadersEditor;
+    model.request = selectedRequest;
+    // Restore headers if they were set, otherwise initialize empty
+    if (!model.request.headers) {
+      model.request.headers = currentHeaders || "";
+    }
+    model.showHeadersEditor = showHeadersEditor;
     this.refs.endpoint.value = model.request.endpoint;
     this.resetRequest(model);
     model.didUpdate();
@@ -532,6 +582,16 @@ class App extends React.Component {
     //replace current endpoint with latest on the have the autocomplete works for all api versions
     let updatedApiEndpoint = e.target.value.replace(/\/data\/v\d+\.0\//, `/data/v${apiVersion}/`);
     model.filteredApiList = model.apiList.filter(api => api.endpoint.toLowerCase().includes(updatedApiEndpoint.toLowerCase()));
+    model.didUpdate();
+  }
+  onToggleHeadersEditor() {
+    let {model} = this.props;
+    model.toggleHeadersEditor();
+    model.didUpdate();
+  }
+  onUpdateHeaders(e) {
+    let {model} = this.props;
+    model.request.headers = e.target.value;
     model.didUpdate();
   }
   componentDidMount() {
@@ -748,7 +808,14 @@ class App extends React.Component {
                   h("input", {ref: "endpoint", className: "slds-input", type: "default", placeholder: "/services/data/v" + apiVersion, onChange: this.onSetEndpoint})
                 ),
                 h("div", {className: "slds-col slds-text-align_right slds-p-left_xx-small"},
-                  h("button", {tabIndex: 1, disabled: !model.canSendRequest, onClick: this.onSend, title: "Ctrl+Enter / F5", className: "slds-button slds-button_brand"}, "Send")
+                  h("div", {className: "slds-grid slds-grid_vertical-align-center slds-grid_align-end slds-gutters_xx-small"},
+                    h("div", {className: "slds-col"},
+                      h("button", {className: "slds-button slds-button_neutral slds-button_small", onClick: this.onToggleHeadersEditor, title: model.showHeadersEditor ? "Hide Headers" : "Show Headers"}, "Headers")
+                    ),
+                    h("div", {className: "slds-col"},
+                      h("button", {tabIndex: 1, disabled: !model.canSendRequest, onClick: this.onSend, title: "Ctrl+Enter / F5", className: "slds-button slds-button_brand slds-button_small"}, "Send")
+                    )
+                  )
                 ),
               ),
               h("div", {className: "slds-m-top_medium"},
@@ -771,6 +838,12 @@ class App extends React.Component {
                       ),
                     ),
                   ) : null
+              ),
+              model.showHeadersEditor && h("div", {className: "slds-m-top_medium"},
+                h("h3", {className: "slds-text-heading_small"}, "Request Headers"),
+                h("div", {className: "slds-m-top_small"},
+                  h("textarea", {className: "slds-textarea", rows: 2, value: model.request.headers || "", onChange: this.onUpdateHeaders, placeholder: "Accept: application/json; charset=UTF-8\nContent-Type: application/json; charset=UTF-8"})
+                )
               ),
               h("div", {className: "slds-m-top_medium"},
                 h("h3", {className: "slds-text-heading_small"}, "Request Body"),
