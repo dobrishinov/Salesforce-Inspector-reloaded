@@ -349,6 +349,20 @@ class OptionsTabSelector extends React.Component {
         content: [
           {option: CustomShortcuts, props: {}}
         ]
+      },
+      {
+        id: "rest-explore",
+        tabTitle: "REST Explorer",
+        content: [
+          {option: MultiCheckboxButtonGroup,
+            props: {title: "Display response information",
+              key: "restExploreDisplayOptions",
+              checkboxes: [
+                {label: "Response Size", name: "responseSize", checked: true},
+                {label: "Response Duration", name: "responseDuration", checked: true}
+              ]}
+          }
+        ]
       }
     ];
     this.onTabSelect = this.onTabSelect.bind(this);
