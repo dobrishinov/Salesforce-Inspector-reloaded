@@ -707,7 +707,6 @@ class Model {
         }
         let contextValueField = contextValueFields[0];
         let queryMethod = useToolingApi ? "tooling/query" : vm.queryAll ? "queryAll" : "query";
-        //let whereClause = contextValueField.field.name + " like '%" + searchTerm.replace(/'/g, "\\'") + "%'";
         let whereClause = contextValueField.field.name + " like '%" + searchTerm.replace(/([\\'])/g, "\\$1") + "%'";
         if (contextValueField.sobjectDescribe.name.toLowerCase() === "recordtype"){
           let sobject = contextPath.split(".")[0];
@@ -1029,11 +1028,8 @@ class Model {
           // Extract SOQL from the result
           const soqlMatch = result.result.match(/<soql>(.*?)<\/soql>/);
           const extractedSoql = soqlMatch ? soqlMatch[1] : result.result;
-          //this.addQueryTab();
           this.updateCurrentTabQuery(extractedSoql);
-          //to resolve sobject and rename current tab
           this.queryAutocompleteHandler();
-          // Update the textarea to show the new query immediately
           if (this.queryInput) {
             this.queryInput.value = extractedSoql;
           }
@@ -1846,7 +1842,6 @@ class App extends React.Component {
                       name: "checkbox-toggle-tooling",
                       value: "checkbox-toggle-tooling",
                       role: "switch",
-                      type: "checkbox",
                       checked: model.queryTooling,
                       onChange: this.onQueryToolingChange,
                       disabled: model.queryAll
@@ -2072,7 +2067,6 @@ class App extends React.Component {
               hidden: model.exportError != null,
               style: {flex: "1 1 0", minHeight: 0, maxHeight: "100%", overflowY: "auto"}
             }
-              /* the scroll table goes here */
             )
           ))
       )

@@ -604,8 +604,6 @@ export function initScrollTable(scroller) {
       }
 
       scrolled.textContent = "";
-      //scrolled.style.height = totalHeight + "px";
-      //scrolled.style.width = totalWidth + "px";
 
       let table = document.createElement("table");
       table.className = "slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered slds-is-relative";
