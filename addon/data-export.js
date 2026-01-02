@@ -90,6 +90,7 @@ class Model {
     this.queryAll = false;
     this.queryTooling = false;
     this.prefHideRelations = localStorage.getItem("hideObjectNameColumnsDataExport") == "true"; // default to false
+    this.prefPreventLineWrap = localStorage.getItem("preventLineWrapDataExport") !== "false"; // default to true (matches v1.27 behavior)
     this.autocompleteResults = {sobjectName: "", title: "\u00A0", results: []};
     this.autocompleteClick = null;
     this.isWorking = false;
@@ -1299,6 +1300,7 @@ function RecordTable(vm) {
     countOfVisibleRecords: null,
     isTooling: false,
     totalSize: -1,
+    preventLineWrap: vm.prefPreventLineWrap,
     addToTable(expRecords) {
       rt.records = rt.records.concat(expRecords);
       if (rt.table.length == 0 && expRecords.length > 0) {

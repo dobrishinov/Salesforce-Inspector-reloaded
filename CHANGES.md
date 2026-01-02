@@ -2,6 +2,7 @@
 
 ## Version 2.0
 
+- Fix Line Wrap in Export Does Not Work [issue #1027](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/1027)
 - `Rest Explore` Add customizable headers, detect language from response and fix [issue 786](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/786)
 - `Data Export` Fix CSV export encoding for non-Latin characters (Hebrew, Arabic, Chinese, etc.) by adding UTF-8 BOM for Excel compatibility (contribution by [Samuel Krissi](https://github.com/samuelkrissi))
 - `Logs Viewer` Allow users to display, filter, delete, share and explain debug logs (contribution by [Samuel Krissi](https://github.com/samuelkrissi))
