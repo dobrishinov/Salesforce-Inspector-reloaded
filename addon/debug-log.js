@@ -56,14 +56,14 @@ class Model {
     // Column widths as percentages for better distribution
     this.columnWidths = {
       checkbox: "3%",
-      user: "17%",
-      operation: "20%",
-      request: "7%",
+      user: "15%",
+      operation: "15%",
+      request: "6%",
       start: "11%",
       status: "6%",
-      action: "15%",
+      action: "14%",
       size: "7%",
-      actions: "14%"
+      actions: "15%"
     };
 
     // Pagination for lazy loading
