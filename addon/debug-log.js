@@ -1,6 +1,6 @@
 /* global React ReactDOM initButton */
 import {sfConn, apiVersion} from "./inspector.js";
-import {UserInfoModel, createSpinForMethod, PromptTemplate, Constants, displayButton} from "./utils.js";
+import {UserInfoModel, createSpinForMethod, PromptTemplate, Constants, isOptionEnabled} from "./utils.js";
 import {PageHeader} from "./components/PageHeader.js";
 import ConfirmModal from "./components/ConfirmModal.js";
 import Toast from "./components/Toast.js";
@@ -1451,7 +1451,7 @@ function LogsTable({model, hideButtonsOption}) {
                       h("svg", {className: "slds-button__icon", "aria-hidden": "true"}, h("use", {xlinkHref: "symbols.svg#download"}))
                     ),
                     // Share: icon-only button, sends the file (no truncated body) (conditional)
-                    displayButton("share-logs", hideButtonsOption) && h("button", {type: "button", className: "slds-button slds-button_neutral", title: "Share", onClick: () => model.share(log.Id)},
+                    isOptionEnabled("share-logs", hideButtonsOption) && h("button", {type: "button", className: "slds-button slds-button_neutral", title: "Share", onClick: () => model.share(log.Id)},
                       h("svg", {className: "slds-button__icon", "aria-hidden": "true"}, h("use", {xlinkHref: "symbols.svg#share"}))
                     ),
                     // Delete: icon-only button, same size as Share
@@ -1746,7 +1746,7 @@ function PreviewModal({model, hideButtonsOption}) {
       h("div", {className: "slds-align_absolute-center slds-text-body_small slds-m-top_xx-small sfir-search-counter"}, `${count ? (model.previewSearch.index + 1) : 0} / ${count}`)
     ),
     // AI button (conditional)
-    displayButton("logs-agentforce", hideButtonsOption) && h("div", {className: "slds-col slds-grow-none"},
+    isOptionEnabled("logs-agentforce", hideButtonsOption) && h("div", {className: "slds-col slds-grow-none"},
       h("button", {
         className: "slds-button slds-button_brand",
         onClick: () => model.openAgentforce(),

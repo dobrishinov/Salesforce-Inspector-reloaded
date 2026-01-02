@@ -1,6 +1,6 @@
 /* global React ReactDOM */
 import {sfConn, apiVersion, sessionError} from "./inspector.js";
-import {getLinkTarget, displayButton, getLatestApiVersionFromOrg, setOrgInfo, getPKCEParameters, getBrowserType, getExtensionId, getClientId, getRedirectUri, Constants, copyToClipboard, DataCache} from "./utils.js";
+import {getLinkTarget, isOptionEnabled, getLatestApiVersionFromOrg, setOrgInfo, getPKCEParameters, getBrowserType, getExtensionId, getClientId, getRedirectUri, Constants, copyToClipboard, DataCache} from "./utils.js";
 import {setupLinks} from "./links.js";
 import AlertBanner from "./components/AlertBanner.js";
 
@@ -591,7 +591,7 @@ class App extends React.PureComponent {
               },
               h("strong", {}, "Platform Tools")
             ),
-            displayButton("org-limits", hideButtonsOption)
+            isOptionEnabled("org-limits", hideButtonsOption)
               ? h(
                 "div",
                 {
@@ -611,7 +611,7 @@ class App extends React.PureComponent {
                 )
               )
               : null,
-            displayButton("explore-api", hideButtonsOption)
+            isOptionEnabled("explore-api", hideButtonsOption)
               ? h(
                 "div",
                 {
@@ -679,7 +679,7 @@ class App extends React.PureComponent {
               },
               h("strong", {}, "Management")
             ),
-            displayButton("generate-token", hideButtonsOption)
+            isOptionEnabled("generate-token", hideButtonsOption)
               ? h(
                 "div",
                 {
@@ -742,7 +742,7 @@ class App extends React.PureComponent {
                 h("span", {}, "Salesforce ", h("u", {}, "H"), "ome")
               )
             ),
-            displayButton("options", hideButtonsOption)
+            isOptionEnabled("options", hideButtonsOption)
               ? h(
                 "div",
                 {
@@ -3377,7 +3377,7 @@ class UserDetails extends React.PureComponent {
                     title: "Show all data",
                   },
                   user.Id,
-                  displayButton("copy-userId", hideButtonsOption)
+                  isOptionEnabled("copy-userId", hideButtonsOption)
                     ? h("span", {
                       className: "sfir-copy-userid-icon",
                       title: "Copy to clipboard",
@@ -3526,7 +3526,7 @@ class UserDetails extends React.PureComponent {
           },
           "PSetG"
         ),
-        displayButton("reset-password", hideButtonsOption) && user.Id !== currentUserId
+        isOptionEnabled("reset-password", hideButtonsOption) && user.Id !== currentUserId
           ? h(
             "button",
             {
@@ -3872,7 +3872,7 @@ class AllDataSelection extends React.PureComponent {
             h(
               "div",
               {className: "slds-card__body"},
-              selectedValue.sobject.isEverCreatable && displayButton("new", hideButtonsOption) && !selectedValue.sobject.name.endsWith("__e")
+              selectedValue.sobject.isEverCreatable && isOptionEnabled("new", hideButtonsOption) && !selectedValue.sobject.name.endsWith("__e")
                 ? h("a", {
                   ref: "showNewBtn",
                   href: this.getNewObjectUrl(sfHost, selectedValue.sobject.newUrl),
