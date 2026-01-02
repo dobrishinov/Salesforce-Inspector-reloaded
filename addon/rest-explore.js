@@ -169,7 +169,6 @@ class Model {
   }
   getDefaultHeaders() {
     // Get default headers that can be edited
-    // Note: Sforce-Call-Options is always set by inspector.js and cannot be edited
     // Note: Authorization/X-SFDC-Session headers are set automatically based on API type
     const headers = [];
     headers.push("Accept: application/json; charset=UTF-8");
@@ -305,7 +304,6 @@ class Model {
     if (this.request.endpoint && this.request.endpoint.includes("ApexLog") && this.request.endpoint.includes("Body")) {
       return "log";
     }
-
     if (!contentType) {
       return result.responseType || "json";
     }
