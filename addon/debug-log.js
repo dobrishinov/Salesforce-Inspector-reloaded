@@ -53,16 +53,17 @@ class Model {
     // Log bodies cache (logId -> body text) for searching
     this.logBodies = new Map();
 
-    // Column widths (fixed, no resizing)
+    // Column widths as percentages for better distribution
     this.columnWidths = {
-      user: 150,
-      action: 150,
-      operation: 250,
-      request: 90,
-      start: 140,
-      status: 100,
-      size: 90,
-      actions: 260
+      checkbox: "3%",
+      user: "17%",
+      operation: "20%",
+      request: "7%",
+      start: "11%",
+      status: "6%",
+      action: "15%",
+      size: "7%",
+      actions: "14%"
     };
 
     // Pagination for lazy loading
@@ -339,7 +340,7 @@ Please structure your response in a clear, organized manner using these sections
       "Request": "Request",
       "Start Time": "StartTime",
       "Status": "Status",
-      "Size (KB)": "LogLength"
+      "Size (MB)": "LogLength"
     };
 
     const sortField = columnMap[column];
@@ -1387,9 +1388,9 @@ function LogsTable({model, hideButtonsOption}) {
     ),
     h("div", {className: "slds-card__body"},
       h("div", {className: "slds-scrollable_x sfir-logs-table-container"},
-        h("table", {className: "slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped sfir-logs-table"},
+        h("table", {className: "slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped slds-table_fixed-layout sfir-logs-table"},
           h("colgroup", {},
-            h("col", {style: {width: 44}}),
+            h("col", {style: {width: cw.checkbox}}),
             h("col", {style: {width: cw.user}}),
             h("col", {style: {width: cw.operation}}),
             h("col", {style: {width: cw.request}}),
@@ -1410,7 +1411,7 @@ function LogsTable({model, hideButtonsOption}) {
               renderSortableHeader("Start Time", "StartTime"),
               renderSortableHeader("Status", "Status"),
               renderSortableHeader("Action", "Operation"),
-              renderSortableHeader("Size (KB)", "LogLength"),
+              renderSortableHeader("Size (MB)", "LogLength"),
               h("th", {"aria-label": "Row actions"})
             )
           ),
@@ -1420,27 +1421,41 @@ function LogsTable({model, hideButtonsOption}) {
               model.ensureUserName(log.LogUserId);
               return h("tr", {key: log.Id},
                 h("td", {}, h("input", {type: "checkbox", checked: model.selectedIds.has(log.Id), onChange: (e) => model.toggleSelect(log.Id, e.target.checked)})),
-                h("td", {style: {width: cw.user}}, model.userMap.get(log.LogUserId) || log.LogUserId || "-"),
-                h("td", {style: {width: cw.operation}, className: "slds-scrollable_x"},
+                h("td", {},
+                  h("span", {className: "slds-truncate", title: model.userMap.get(log.LogUserId) || log.LogUserId || "-"},
+                    model.userMap.get(log.LogUserId) || log.LogUserId || "-"
+                  )
+                ),
+                h("td", {},
                   h("span", {className: "slds-truncate", title: log.Operation || "-"}, log.Operation || "-")
                 ),
-                h("td", {style: {width: cw.request}, className: "slds-scrollable_x"},
+                h("td", {},
                   h("span", {className: "slds-truncate", title: log.Request || "-"}, log.Request || "-")
                 ),
-                h("td", {style: {width: cw.start}}, new Date(log.StartTime).toLocaleString()),
-                h("td", {style: {width: cw.status}},
+                h("td", {},
+                  h("span", {className: "slds-truncate", title: new Date(log.StartTime).toLocaleString()},
+                    new Date(log.StartTime).toLocaleString()
+                  )
+                ),
+                h("td", {},
                   h("div", {className: "slds-scrollable_y slds-text-body_small sfir-log-status-cell"},
                     log.Status || "-"
                   )
                 ),
-                h("td", {style: {width: cw.action}, className: "slds-scrollable_x"},
+                h("td", {},
                   (() => {
                     const label = (model.actionSummary.get(log.Id) || parseAction(log.Operation)).label;
                     return h("span", {className: "slds-truncate", title: label}, label);
                   })()
                 ),
-                h("td", {style: {width: cw.size}}, (log.LogLength / 1024).toFixed(2)),
-                h("td", {style: {width: cw.actions}},
+                h("td", {},
+                  (() => {
+                    const sizeMB = log.LogLength / (1024 * 1024);
+                    const formatted = sizeMB < 1 ? sizeMB.toFixed(2) : sizeMB.toFixed(1);
+                    return h("span", {className: "slds-truncate", title: `${formatted} MB`}, `${formatted} MB`);
+                  })()
+                ),
+                h("td", {},
                   h("div", {className: "slds-button_group sfir-actions sfir-log-actions-group", role: "group"},
                     h("button", {type: "button", className: "slds-button slds-button_neutral", onClick: () => model.preview(log.Id)},
                       h("svg", {className: "slds-button__icon slds-button__icon_left", "aria-hidden": "true"}, h("use", {xlinkHref: "symbols.svg#search"})),

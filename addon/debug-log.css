@@ -177,6 +177,7 @@ mark.sfir-highlight.current {
 
 .sfir-logs-table {
   table-layout: fixed;
+  width: 100%;
   min-width: 900px;
 }
 
