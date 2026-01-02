@@ -755,36 +755,6 @@ class App extends React.Component {
                     )
                   ),
                 )
-                /*
-                h("fieldset", { className: "slds-form-element slds-form-element_compound" },
-                  h("div", { className: "slds-form-element__control" },
-                    h("div", { className: "slds-form-element__row slds-grid_align-end" },
-                      h("div", { className: "slds-size_4-of-12" },
-                        h("div", { className: "slds-grid" },
-                          h("div", { className: "slds-col" },
-                            h("div", { className: "slds-form-element" },
-
-                            )
-                          ),
-                          h("div", { className: "slds-col" },
-                            h("div", { className: "slds-form-element" },
-
-                            )
-                          ),
-                          h("div", { className: "slds-col" },
-                            h("div", { className: "slds-form-element" },
-                              h("div", { className: "slds-form-element__control" },
-                                h("button", { className: "slds-button slds-button_neutral", onClick: this.onClearHistory, title: "Clear Request History" }, "Clear")
-                              )
-                            )
-                          )
-                        )
-                      ),
-
-                      ),
-                    )
-                  )
-                )*/
               )
             ),
             h("div", {className: "slds-card__body slds-card__body_inner"},
