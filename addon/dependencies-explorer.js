@@ -1,6 +1,6 @@
 /* global React ReactDOM */
 import {sfConn, apiVersion} from "./inspector.js";
-import {UserInfoModel, createSpinForMethod} from "./utils.js";
+import {UserInfoModel, createSpinForMethod, isRecordId} from "./utils.js";
 import {PageHeader} from "./components/PageHeader.js";
 /* global initButton */
 
@@ -186,14 +186,6 @@ const Helpers = {
     return CONFIG.TYPE_COLORS[type] || "#666";
   },
 
-  /**
-   * Validates if a string is a valid Salesforce ID
-   * @param {string} id - The ID to validate
-   * @returns {boolean} True if valid Salesforce ID
-   */
-  isValidSalesforceId(id) {
-    return id && /^[a-zA-Z0-9]{15,18}$/.test(id);
-  },
 
   /**
    * Checks if a type is a custom field
@@ -819,7 +811,7 @@ class Model {
     let validObjectIds = [...new Set(objectIds.filter(id =>
       id
       && id.length >= 15
-      && Helpers.isValidSalesforceId(id)
+      && isRecordId(id)
     ))];
 
     if (!validObjectIds.length) return {};

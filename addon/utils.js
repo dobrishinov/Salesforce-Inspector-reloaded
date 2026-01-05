@@ -427,3 +427,17 @@ export class DataCache {
     keysToRemove.forEach(key => localStorage.removeItem(key));
   }
 }
+
+/**
+ * Validates if a string is a valid Salesforce record ID
+ * @param {string} recordId - The ID to validate
+ * @returns {boolean} True if valid Salesforce record ID
+ */
+export function isRecordId(recordId) {
+  return typeof recordId === "string"
+       && /^[a-zA-Z0-9]{15,18}$/.test(recordId)
+       && /^[0-9a-zA-Z]{3}/.test(recordId)
+       && !recordId.startsWith("000")
+       && !/[^a-zA-Z0-9]/.test(recordId)
+       && /[0-9]/.test(recordId.slice(0, 5));
+}
