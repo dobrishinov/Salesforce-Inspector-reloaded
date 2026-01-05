@@ -73,18 +73,6 @@ const CONFIG = {
     "Role": "#b91c1c" // Dark red
   },
 
-  /** @type {Array<string>} List of standard Salesforce objects */
-  STANDARD_OBJECTS: [
-    "Account", "Contact", "Case", "Opportunity", "Lead", "User", "Profile", "Role", "Task", "Event", "Note", "Attachment",
-    "ContentVersion", "ContentDocument", "FeedItem", "FeedComment", "CollaborationGroup", "CollaborationGroupMember",
-    "Group", "GroupMember", "Queue", "QueueSobject", "PermissionSet", "PermissionSetAssignment", "CustomPermission",
-    "CustomPermissionDependency", "SetupEntityAccess", "FieldPermissions", "ObjectPermissions", "TabDefinition", "TabSet",
-    "TabSetMember", "FlexiPage", "LightningPage", "LightningComponent", "LightningComponentBundle", "AuraDefinitionBundle",
-    "StaticResource", "CustomObject", "CustomField", "CustomTab", "CustomApplication", "ContactPointTypeConsent",
-    "ContactPointType", "ContactPointEmail", "ContactPointPhone", "ContactPointAddress", "ContactPointConsent",
-    "ContactPointTypeConsentHistory", "ContactPointTypeConsentShare", "ContactPointTypeConsentFeed"
-  ],
-
   DEFAULT_METADATA_TYPE: "ApexClass",
   DEFAULT_FILTER: "dependedOnBy",
   DEFAULT_EXCLUDE_EXTERNAL_PACKAGES: true,
@@ -223,17 +211,6 @@ const Helpers = {
    */
   isCustomObject(type) {
     return type && type.toUpperCase() === "CUSTOMOBJECT";
-  },
-
-  /**
-   * Checks if an ID represents a standard Salesforce object
-   * @param {string} id - The object ID or name
-   * @returns {boolean} True if standard object
-   */
-  isStandardObject(id) {
-    return CONFIG.STANDARD_OBJECTS.includes(id)
-           || (id && id.length <= 10)
-           || (id && !id.match(/^[A-Z][a-z]+$/));
   },
 
   /**
@@ -393,13 +370,33 @@ class Model {
     return queries[metadataType] || "";
   }
 
+  /**
+   * Fetches all records from a Salesforce Tooling API query, handling pagination via nextRecordsUrl.
+   * @param {string} soql - The SOQL query string
+   * @returns {Promise<Array>} Array of all records across all pages
+   */
+  async _fetchAllToolingQueryRecords(soql) {
+    const allRecords = [];
+    let queryUrl = `/services/data/v${apiVersion}/tooling/query/?q=` + encodeURIComponent(soql);
+    
+    while (queryUrl) {
+      const res = await sfConn.rest(queryUrl);
+      if (res.records) {
+        allRecords.push(...res.records);
+      }
+      // Check if there are more records to fetch
+      queryUrl = res.nextRecordsUrl || null;
+    }
+    
+    return allRecords;
+  }
+
   async _fetchMetadataItems(metadataType) {
     try {
       const soql = this._buildMetadataQuery(metadataType);
       if (!soql) return [];
 
-      let res = await sfConn.rest(`/services/data/v${apiVersion}/tooling/query/?q=` + encodeURIComponent(soql));
-      let records = res.records || [];
+      let records = await this._fetchAllToolingQueryRecords(soql);
 
       // Apply special handling based on metadata type
       switch (metadataType) {
@@ -445,8 +442,8 @@ class Model {
     if (objectIds.length) {
       // Fetch object names for these IDs
       let soqlObj = `SELECT Id, DeveloperName FROM CustomObject WHERE Id IN ('${objectIds.join("','")}')`;
-      let objRes = await sfConn.rest(`/services/data/v${apiVersion}/tooling/query/?q=` + encodeURIComponent(soqlObj));
-      (objRes.records || []).forEach(obj => {
+      let objRecords = await this._fetchAllToolingQueryRecords(soqlObj);
+      objRecords.forEach(obj => {
         objectNamesById[obj.Id] = obj.DeveloperName;
       });
     }
@@ -554,7 +551,6 @@ class Model {
 
   /**
    * Fetch dependencies for a given metadata component (entryPoint).
-   * For now, entryPoint is hardcoded for demo; later, make it user-selectable.
    */
   fetchDependencies() {
     if (!this.selectedMetadataItem) {
@@ -615,8 +611,9 @@ class Model {
   }
 
   /**
-   * Core logic: recursively fetch dependencies and build a tree.
-   * This is a simplified port of sfdc-soup-master logic, using sfConn.rest for SOQL queries.
+   * Core logic: recursively fetch dependencies and build a tree. 
+   * Inspired by sfdc-soup-master project (https://github.com/pgonzaleznetwork/sfdc-soup), 
+   * using sfConn.rest for SOQL queries.
    */
   async _getDependencies(entryPoint, direction) {
     // Helper to run SOQL via Tooling API
@@ -671,8 +668,11 @@ class Model {
     return result;
   }
 
-  // --- Enhancement logic ported from sfdc-soup-master ---
-
+  /**
+   * Enhance custom field data with object names and field names.
+   * Inspired by sfdc-soup-master project (https://github.com/pgonzaleznetwork/sfdc-soup)
+   */
+  
   async _enhanceCustomFieldData(dependencies) {
     // 1. Collect all CustomField IDs
     let customFieldIds = [];
@@ -807,9 +807,9 @@ class Model {
     if (!customFieldIds.length) return {};
     // SOQL: SELECT Id, TableEnumOrId FROM CustomField WHERE Id IN (...)
     let soql = `SELECT Id, TableEnumOrId FROM CustomField WHERE Id IN ('${customFieldIds.join("','")}')`;
-    let res = await sfConn.rest(`/services/data/v${apiVersion}/tooling/query/?q=` + encodeURIComponent(soql));
+    let records = await this._fetchAllToolingQueryRecords(soql);
     let map = {};
-    for (let rec of res.records) map[rec.Id] = rec.TableEnumOrId;
+    for (let rec of records) map[rec.Id] = rec.TableEnumOrId;
     return map;
   }
   async _getObjectNamesById(objectIds) {
@@ -827,9 +827,9 @@ class Model {
     // Use Tooling API to get object names by ID
     let soql = `SELECT Id, DeveloperName, NamespacePrefix FROM CustomObject WHERE Id IN ('${validObjectIds.join("','")}')`;
     try {
-      let res = await sfConn.rest(`/services/data/v${apiVersion}/tooling/query/?q=` + encodeURIComponent(soql));
+      let records = await this._fetchAllToolingQueryRecords(soql);
       let map = {};
-      for (let rec of res.records) {
+      for (let rec of records) {
         let name = rec.NamespacePrefix ? `${rec.NamespacePrefix}__${rec.DeveloperName}` : rec.DeveloperName;
         map[rec.Id] = name;
       }
@@ -859,9 +859,9 @@ class Model {
     }
     let where = clauses.length ? `WHERE ${clauses.join(" OR ")}` : "";
     let soql = `SELECT Id, DeveloperName, NamespacePrefix FROM CustomObject ${where}`;
-    let res = await sfConn.rest(`/services/data/v${apiVersion}/tooling/query/?q=` + encodeURIComponent(soql));
+    let records = await this._fetchAllToolingQueryRecords(soql);
     let map = {};
-    for (let rec of res.records) {
+    for (let rec of records) {
       let name = rec.NamespacePrefix ? `${rec.NamespacePrefix}__${rec.DeveloperName}` : rec.DeveloperName;
       map[name] = rec.Id;
     }
@@ -883,9 +883,8 @@ class Model {
     );
     let soql = `SELECT DeveloperName, ReferenceTo, ValueSet, TableEnumOrId FROM CustomField WHERE DeveloperName IN ('${fieldNamesOnly.join("','")}')`;
     try {
-      let res = await sfConn.rest(`/services/data/v${apiVersion}/tooling/query/?q=` + encodeURIComponent(soql));
+      let records = await this._fetchAllToolingQueryRecords(soql);
       // Map back to include full name for processing
-      let records = res.records || [];
       records.forEach(rec => {
         rec.fullName = rec.DeveloperName; // For compatibility with existing logic
       });
@@ -1848,10 +1847,8 @@ class App extends React.Component {
       height: "14",
       fill: "currentColor",
       className: "dep-icon-blue-margin"
-    },
-    h("path", {
-      d: "m272 417-21-3-21-6c-4-1-9 0-12 3l-5 5a79 79 0 0 1-106 6 77 77 0 0 1-4-112l76-76c10-10 22-16 34-20a79 79 0 0 1 74 20l10 13c4 7 13 8 18 2l28-28c4-4 4-10 1-15l-14-16a128 128 0 0 0-71-37 143 143 0 0 0-124 37l-73 73a139 139 0 0 0-6 193 137 137 0 0 0 198 4l25-25c7-5 2-17-7-18zM456 58a139 139 0 0 0-193 6l-23 22c-7 7-2 19 7 20 14 1 28 4 42 8 4 1 9 0 12-3l5-5a79 79 0 0 1 106-6 77 77 0 0 1 4 112l-76 76a85 85 0 0 1-34 20 79 79 0 0 1-74-20l-10-13c-4-7-13-8-18-2l-28 28c-4 4-4 10-1 15l14 16a130 130 0 0 0 70 37 143 143 0 0 0 124-37l76-76a137 137 0 0 0-3-198z"
-    })
+      },
+      h("use", {xlinkHref: "symbols.svg#link"})
     ),
     "Open in Salesforce"
     )
@@ -2110,10 +2107,8 @@ class App extends React.Component {
           height: "14",
           fill: "currentColor",
           className: "dep-icon-blue"
-        },
-        h("path", {
-          d: "m272 417-21-3-21-6c-4-1-9 0-12 3l-5 5a79 79 0 0 1-106 6 77 77 0 0 1-4-112l76-76c10-10 22-16 34-20a79 79 0 0 1 74 20l10 13c4 7 13 8 18 2l28-28c4-4 4-10 1-15l-14-16a128 128 0 0 0-71-37 143 143 0 0 0-124 37l-73 73a139 139 0 0 0-6 193 137 137 0 0 0 198 4l25-25c7-5 2-17-7-18zM456 58a139 139 0 0 0-193 6l-23 22c-7 7-2 19 7 20 14 1 28 4 42 8 4 1 9 0 12-3l5-5a79 79 0 0 1 106-6 77 77 0 0 1 4 112l-76 76a85 85 0 0 1-34 20 79 79 0 0 1-74-20l-10-13c-4-7-13-8-18-2l-28 28c-4 4-4 10-1 15l14 16a130 130 0 0 0 70 37 143 143 0 0 0 124-37l76-76a137 137 0 0 0-3-198z"
-        })
+          },
+          h("use", {xlinkHref: "symbols.svg#link"})
         )
         ),
         dep.namespace && h("span", {
