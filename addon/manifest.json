@@ -141,6 +141,9 @@
     "data-import": {
       "description": "Data Import"
     },
+    "dependencies-explorer": {
+      "description": "Dependencies Explorer"
+    },
     "options": {
       "description": "Options"
     },
