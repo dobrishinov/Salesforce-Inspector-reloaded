@@ -2095,6 +2095,7 @@ class App extends React.Component {
     if (sfConn.instanceHostname && model.sfHost !== sfConn.instanceHostname) {
       model.sfHost = sfConn.instanceHostname;
       model.sfLink = "https://" + sfConn.instanceHostname;
+      model.orgName = model.sfHost.split(".")[0]?.toUpperCase() || "";
     }
 
     ReactDOM.render(h(App, {model}), root);
