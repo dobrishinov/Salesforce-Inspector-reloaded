@@ -215,6 +215,80 @@ graph TD
 
 ---
 
+## Generate Flow Analysis with Agentforce
+
+> **Prerequisite**
+> Agentforce needs to be enabled.
+> The prompt DescribeFlow needs to be deployed in the org.
+
+You can use Agentforce to generate detailed flow analysis directly from the Flow Scanner page. This feature leverages Salesforce's Prompt Templates to help you understand what your flow does, when it executes, and what business purpose it serves.
+
+> **Note**
+> The standard Salesforce 'Prompt Template User' permission is required to use this feature.
+
+By default, the Agentforce button is hidden. To enable it:
+
+1. Go to Options -> Flow Scanner
+2. Enable "Show Agentforce button"
+3. Optionally, you can customize the prompt template name that will be used for generating flow analysis
+
+### How to Use
+
+1. Open Flow Scanner on any flow
+2. Click the Agentforce (Einstein) button in the header
+3. The modal will open with a default prompt: "Based on the following Salesforce Flow metadata, explain in one paragraph what this flow does, what event triggers it, and the business purpose it serves."
+4. You can modify the prompt or use the default one
+5. Click **Send** to generate the analysis
+6. The analysis result will appear below the instruction textarea in an SLDS box
+
+The Agentforce feature analyzes the flow's XML metadata and provides insights about:
+
+- What the flow does
+- What events trigger it
+- The business purpose it serves
+- Key components and their relationships
+- Decision logic and data handling
+
+DescribeFlow.genAiPromptTemplate meta content:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier>kHV1dE2/3c+Ln69ej5g+TuywC22Qn/hIXhG7gDkb9JA=_1</activeVersionIdentifier>
+    <description>Based on a flow metadata, describe what the flow does, when it is executed and what are the metadata it interact with</description>
+    <developerName>DescribeFlow</developerName>
+    <masterLabel>Describe Flow</masterLabel>
+    <templateVersions>
+        <content>As a Salesforce expert in Flow and based on those metadata: {!$Input:FlowMetadata}, perform an analysis as detailed in this description: {!$Input:Description}
+
+Instructions:**
+1. Output the generated analysis clearly enclosed within &lt;flowAnalysis&gt; tags.
+</content>
+        <inputs>
+            <apiName>Description</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>Description</masterLabel>
+            <referenceName>Input:Description</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>FlowMetadata</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>Flow Metadata</masterLabel>
+            <referenceName>Input:FlowMetadata</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultOpenAIGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>kHV1dE2/3c+Ln69ej5g+TuywC22Qn/hIXhG7gDkb9JA=_1</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>
+```
+
+---
+
 ## Troubleshooting
 
 - **No Rules Enabled:** If you see a message about no rules being enabled, open the Options page and enable at least one rule.
