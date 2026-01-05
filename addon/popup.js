@@ -274,6 +274,7 @@ class App extends React.PureComponent {
       p: ["click", "optionsBtn"],
       m: ["click", "eventMonitorBtn"],
       v: ["click", "logsViewerBtn"],
+      c: ["click", "dependenciesExplorerBtn"],
       o: ["tab", "objectTab"],
       u: ["tab", "userTab"],
       s: ["tab", "shortcutTab"],
@@ -564,7 +565,7 @@ class App extends React.PureComponent {
             ),
             h("div", {className: "slds-col slds-size_1-of-1 slds-p-horizontal_xx-small  slds-m-bottom_xx-small"},
               h("a", {ref: "dependenciesExplorerBtn", href: `dependencies-explorer.html?${hostArg}`, target: linkTarget, className: "page-button slds-button slds-button_neutral"},
-                h("span", {}, h("u", {}, ""), "Dependencies Explorer")
+                h("span", {}, "Depen", h("u", {}, "c"), "encies Explorer")
               )
             )
           ),
