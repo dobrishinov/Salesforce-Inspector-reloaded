@@ -11,6 +11,10 @@ You can use Agentforce to generate detailed log analysis. This feature leverages
 
 By default, the Agentforce button is hidden. To enable it:
 
+1. Go to Options -> Log Viewer
+2. Enable "Agentforce" button
+3. Optionally, you can customize the prompt template name that will be used for generating log analysis
+
 ## Overview
 
 The Debug Logs Viewer allows you to view, filter, analyze, and manage Salesforce debug logs directly from the extension. With advanced features like Agentforce-powered analysis, grep-like filtering, and smart pagination, it transforms the debug log experience into a productive workflow.
