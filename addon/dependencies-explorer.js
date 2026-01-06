@@ -2624,33 +2624,17 @@ class App extends React.Component {
             className: "dep-footer-session"
           }, model.dependencyTree
             ? h("span", {},
-              h("svg", {
-                viewBox: "0 0 520 520",
-                width: "15",
-                height: "15",
-                fill: "currentColor",
-                className: "dep-icon-inline-no-margin"
-              },
-              h("path", {
-                d: "M496 453 362 320a189 189 0 1 0-340-92 190 190 0 0 0 298 135l133 133a14 14 0 0 0 21 0l21-21a17 17 0 0 0 1-22ZM210 338a129 129 0 1 1 130-130 129 129 0 0 1-130 130Z"
-              })
-              ),
-              ` • ${model.currentFilter === "dependedOnBy" ? model.getReferencedByCount() : model.getDependsOnCount()} ${(model.currentFilter === "dependedOnBy" ? model.getReferencedByCount() : model.getDependsOnCount()) === 1 ? "item" : "items"} found`
-            )
-            : h("span", {},
-              h("svg", {
-                viewBox: "0 0 520 520",
-                width: "15",
-                height: "15",
-                fill: "currentColor",
-                className: "dep-icon-inline-no-margin"
-              },
-              h("path", {
-                d: "M496 453 362 320a189 189 0 1 0-340-92 190 190 0 0 0 298 135l133 133a14 14 0 0 0 21 0l21-21a17 17 0 0 0 1-22ZM210 338a129 129 0 1 1 130-130 129 129 0 0 1-130 130Z"
-              })
-              ),
-              " • Please select a metadata type and item to analyze"
-            )
+                `${model.currentFilter === "dependedOnBy"
+                  ? model.getReferencedByCount()
+                  : model.getDependsOnCount()
+                } ${
+                  (model.currentFilter === "dependedOnBy"
+                    ? model.getReferencedByCount()
+                    : model.getDependsOnCount()
+                  ) === 1 ? "item" : "items"
+                } found`
+              )
+            : h("span", {}, "")
           ),
           h("button", {
             onClick: () => model.toggleJsonDebug(),
