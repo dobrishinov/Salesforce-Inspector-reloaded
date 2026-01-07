@@ -37,13 +37,9 @@ h1 {
 }
 
 .dep-content {
-    max-height: calc(100vh - 340px); /* Responsive height based on viewport */
-    min-height: 200px; /* Minimum height to ensure usability */
-    overflow: auto;
     padding: 12px;
-    border-radius: 4px;
     border: 1px solid #dee2e6;
-    background-color: #fff;
+    min-height: 200px;
 }
 
 .dep-header {
@@ -53,7 +49,7 @@ h1 {
     margin-bottom: 16px;
     padding: 12px;
     background-color: #fff;
-    border-radius: 4px;
+    /* border-radius: 4px; */
     border: 1px solid #dee2e6;
 }
 
@@ -63,7 +59,7 @@ h1 {
     justify-content: space-between;
     gap: 2em;
     margin-bottom: 1em;
-    padding: 0 8px;
+    /* padding: 0 8px; */
 }
 
 .dep-controls {
@@ -78,7 +74,7 @@ h1 {
     border-radius: 6px;
     margin: 0 0 12px 0;
     padding: 10px 12px;
-    background-color: #fff;
+    background-color: #f8f9fa;
     font-size: 13px;
 }
 
@@ -96,7 +92,7 @@ h1 {
 }
 
 .dep-card-title {
-    font-weight: bold;
+    font-weight: 600;
     font-size: 13px;
     color: #333;
 }
@@ -191,7 +187,7 @@ h1 {
 }
 
 .dep-group-title {
-    font-weight: bold;
+    font-weight: 600;
     font-size: 14px;
 }
 
@@ -210,19 +206,23 @@ h1 {
     transition: transform 0.2s;
 }
 
+.dep-group-expand:hover {
+    color: #005fb8;
+}
+
 .dep-group-expand.expanded {
     transform: rotate(90deg);
 }
 
 .dep-group-body {
     padding: 12px;
-    background-color: #f8f9fa;
+    /* background-color: #f8f9fa; */
 }
 
 /* ===== FLAT GROUP STYLES ===== */
 .dep-flat-group {
     border: 1px solid #ddd;
-    border-radius: 6px;
+    border-radius: 10px;
     margin: 0 0 12px 0;
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -230,7 +230,7 @@ h1 {
 
 .dep-flat-group-header {
     padding: 5px 10px;
-    background-color: #f8f9fa;
+    /* background-color: #f8f9fa; */
     border-bottom: 1px solid #dee2e6;
     border-radius: 6px 6px 0 0;
     cursor: pointer;
@@ -530,7 +530,7 @@ h1 {
 
 /* ===== LOADING STATES ===== */
 .dep-loading {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
@@ -606,8 +606,8 @@ h1 {
 .dep-filter-toggle {
     margin-right: 16px;
     cursor: pointer;
-    padding: 8px 16px;
-    border-radius: 4px;
+    padding: 6px 16px;
+    border-radius: 10px;
     border: 1px solid;
     transition: all 0.2s;
 }
@@ -632,7 +632,7 @@ h1 {
 /* ===== VIEW TOGGLE ===== */
 .dep-view-toggle {
     cursor: pointer;
-    border-radius: 4px 4px 0 0;
+    border-radius: 10px 10px 0 0;
     background-color: white;
     color: #333;
     border: 1px solid #dee2e6;
@@ -755,7 +755,7 @@ h1 {
 }
 
 .dep-section-subtitle {
-    margin: 20px 0 10px 0;
+    margin: 20px 0 6px 0;
     color: #666;
     font-size: 14px;
 }
@@ -1074,7 +1074,7 @@ h1 {
 }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
+@media (max-width: 1100px) {
     .dep-result-bar {
         flex-direction: column;
         gap: 1em;
@@ -1082,29 +1082,21 @@ h1 {
 
     .dep-controls {
         flex-direction: column;
-        gap: 0.5em;
+        /* gap: 0.5em; */
     }
 
     .dep-select,
     .dep-dropdown {
         min-width: 100%;
-        max-width: 100%;
+        /* max-width: 100%; */
     }
 }
 
 /* ===== RETRO TREE STRUCTURE FOR DEPENDENCY TREE ===== */
 .dep-tree-container {
-    /* font-family: 'Courier New', monospace; */
-    font-size: 13px;
-    color: #2c3e50;
-    background-color: #fff;
+    padding: 12px;
     border: 1px solid #dee2e6;
-    border-radius: 4px;
-    padding: 10px 18px;
-    max-height: calc(100vh - 340px); /* Responsive height based on viewport */
-    min-height: 200px; /* Minimum height to ensure usability */
-    overflow-y: auto;
-    overflow-x: hidden;
+    min-height: 200px;
 }
 
 .dep-tree-item {
@@ -1169,8 +1161,8 @@ h1 {
 
 .dep-tree-expand:hover {
     color: #005fb8;
-    background-color: #e3f2fd;
-    border-radius: 2px;
+    /* background-color: #e3f2fd; */
+    /* border-radius: 2px; */
 }
 
 .dep-tree-icon {
@@ -1305,7 +1297,7 @@ h1 {
     transition: background-color 0.2s ease;
     flex-wrap: nowrap;
     margin-left: 0 !important;
-    border-radius: 5px;
+    border-radius: 10px;
     padding: 5px 10px;
     border: 1px solid #dee2e6;
     margin: 2px 0 2px 0;

@@ -35,42 +35,42 @@ const CONFIG = {
   /** @type {Object.<string, string>} Type colors mapping */
   TYPE_COLORS: {
     // Code-related types - Blue tones
-    "ApexClass": "#2563eb", // Royal blue
-    "ApexTrigger": "#3b82f6", // Sky blue
-    "ApexPage": "#1d4ed8", // Navy blue
-    "ApexComponent": "#60a5fa", // Light blue
+    "ApexClass": "#2563eb",
+    "ApexTrigger": "#2563eb",
+    "ApexPage": "#2563eb",
+    "ApexComponent": "#2563eb",
 
     // Data/Object types - Green tones
-    "CustomObject": "#059669", // Emerald green
-    "CustomField": "#10b981", // Green
-    "GlobalValueSet": "#34d399", // Light green
+    "CustomObject": "#059669",
+    "CustomField": "#059669",
+    "GlobalValueSet": "#059669",
 
     // Lightning/UI types - Purple tones
-    "LightningComponent": "#7c3aed", // Purple
-    "FlexiPage": "#8b5cf6", // Violet
+    "LightningComponent": "#7c3aed",
+    "FlexiPage": "#7c3aed",
 
     // Resource types - Orange tones
-    "StaticResource": "#ea580c", // Orange
-    "Installed Package": "#f97316", // Light orange
+    "StaticResource": "#ea580c",
+    "Installed Package": "#ea580c",
 
     // Automation types - Teal tones
-    "Flow": "#0d9488", // Teal
-    "WorkflowRule": "#14b8a6", // Light teal
-    "ValidationRule": "#0f766e", // Dark teal
+    "Flow": "#0d9488",
+    "WorkflowRule": "#0d9488",
+    "ValidationRule": "#0d9488",
 
     // Content types - Yellow tones
-    "CustomLabel": "#ca8a04", // Yellow
-    "EmailTemplate": "#eab308", // Light yellow
+    "CustomLabel": "#ca8a04",
+    "EmailTemplate": "#ca8a04",
 
     // Layout types - Gray tones
-    "Layout": "#6b7280", // Gray
-    "WebLink": "#9ca3af", // Light gray
+    "Layout": "#6b7280",
+    "WebLink": "#6b7280",
 
     // Security types - Red tones
-    "PermissionSet": "#dc2626", // Red
-    "Profile": "#ef4444", // Light red
-    "User": "#f87171", // Very light red
-    "Role": "#b91c1c" // Dark red
+    "PermissionSet": "#dc2626",
+    "Profile": "#dc2626",
+    "User": "#dc2626",
+    "Role": "#dc2626"
   },
 
   DEFAULT_METADATA_TYPE: "ApexClass",
@@ -2492,7 +2492,7 @@ class App extends React.Component {
 
           model.dependencyTree && h("div", {},
             h("div", {
-              className: "dep-header"
+              className: "slds-card dep-header"
             },
             h("div", {},
               h("h3", {
@@ -2581,7 +2581,7 @@ class App extends React.Component {
             }, JSON.stringify(model.getJsonDebugData(), null, 2))
 
             : h("div", {
-              className: model._showFlatView ? "dep-content" : "dep-tree-container"
+              className: model._showFlatView ? "slds-card dep-content" : "slds-card dep-tree-container"
             },
             (() => {
               const filteredDeps = model.getFilteredDependencies();
