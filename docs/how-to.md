@@ -274,7 +274,10 @@ From the option page, enable "Use favicon color on sandbox banner"
 
 ## Customize extension's shortcuts
 
-Navigate to [chrome://extensions/shortcut](chrome://extensions/shortcut) and choose dedicated shortcuts for the pages you want.
+Navigate to your browser shortcut menu and choose dedicated shortcuts for the pages you want.
+
+* Chrome: [chrome://extensions/shortcut](chrome://extensions/shortcut)
+* Edge: [edge://extensions/shortcuts](edge://extensions/shortcuts)
 
 <img width="660" alt="Use Chrome Shortcuts" src="https://github.com/tprouvot/Salesforce-Inspector-reloaded/assets/35368290/382aea2d-5278-4dfe-89e6-6dcec4c724c9">
 
@@ -466,4 +469,3 @@ When enabled, the **Reset Password** button appears while inspecting a User reco
 > **Note:** If the current session does not have sufficient permissions to access user information or perform a password reset, Salesforce returns an **INSUFFICIENT_ACCESS** error.
 
 <img width="278" height="161" alt="Reset password error" src="https://github.com/user-attachments/assets/5814e9d5-f037-41af-8f84-1997ab539292" />
-
