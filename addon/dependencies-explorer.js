@@ -2339,50 +2339,8 @@ class App extends React.Component {
           height: "calc(100vh - 4rem)"
         }
       },
-      h("div", {className: "area dep-area", id: "dependencies-area"},
+      h("div", {className: "area", id: "dependencies-area"},
         h("div", {className: "result-bar dep-result-bar"},
-          h("div", {className: "dep-buttons-left"},
-            h("button", {
-              onClick: () => model.downloadPackageXml(),
-              disabled: !model.dependencyResults || !model.dependencyResults.dependsOn.length || model.currentFilter !== "dependsOn",
-              className: "slds-button slds-button_neutral"
-            },
-            h("span", {className: ""},
-              h("svg", {
-                viewBox: "0 0 520 520",
-                width: "18",
-                height: "18",
-                fill: "currentColor",
-                className: "dep-icon-inline-margin"
-              },
-              h("path", {
-                d: "M462 389 274 496c-10 6-23 6-33 0L54 389c-8-4-8-14 0-18l44-25a10 10 0 0 1 10 0l114 65c11 6 23 9 36 9s25-3 36-9l114-65a10 10 0 0 1 10 0l44 25c8 4 8 14 0 18zm0-120L274 376c-10 6-23 6-33 0L54 269c-8-4-8-14 0-18l44-25a10 10 0 0 1 10 0l114 65c11 6 23 9 36 9s25-3 36-9l114-65a10 10 0 0 1 10 0l44 25c8 4 8 14 0 18zm-219-13L55 149c-8-4-8-14 0-18L243 24c10-6 23-6 33 0l188 107c8 4 8 14 0 18L276 256c-10 5-23 5-33 0z"
-              })
-              )
-            ),
-            "Generate Package.xml"
-            ),
-            h("button", {
-              onClick: () => model.exportDependencies(),
-              disabled: !model.dependencyResults || (!model.dependencyResults.dependsOn.length && !model.dependencyResults.dependedOnBy.length),
-              className: "slds-button slds-button_neutral"
-            },
-            h("span", {className: ""},
-              h("svg", {
-                viewBox: "0 0 520 520",
-                width: "18",
-                height: "18",
-                fill: "currentColor",
-                className: "dep-icon-inline-margin"
-              },
-              h("path", {
-                d: "M23 379v2c0 8 6 14 14 14 4 0 7-1 10-4 0 0 101-109 225-76v110c0 8 6 14 14 14l7-2 201-171c3-3 5-7 5-11s-2-8-4-10L294 82l-8-2c-8 0-14 6-14 14v103c-1 0-199-30-249 182z"
-              })
-              )
-            ),
-            "Export Summary"
-            )
-          ),
           h("div", {className: "dep-controls"},
             h("select", {
               value: model.selectedMetadataType,
@@ -2472,6 +2430,48 @@ class App extends React.Component {
               disabled: model.spinnerCount > 0 || !model.selectedMetadataItem,
               className: "slds-button slds-button_brand"
             }, "Analyze Dependencies")
+          ),
+          h("div", {className: "dep-buttons-left"},
+            h("button", {
+              onClick: () => model.downloadPackageXml(),
+              disabled: !model.dependencyResults || !model.dependencyResults.dependsOn.length || model.currentFilter !== "dependsOn",
+              className: "slds-button slds-button_neutral"
+            },
+            h("span", {className: ""},
+              h("svg", {
+                viewBox: "0 0 520 520",
+                width: "18",
+                height: "18",
+                fill: "currentColor",
+                className: "dep-icon-inline-margin"
+              },
+              h("path", {
+                d: "M462 389 274 496c-10 6-23 6-33 0L54 389c-8-4-8-14 0-18l44-25a10 10 0 0 1 10 0l114 65c11 6 23 9 36 9s25-3 36-9l114-65a10 10 0 0 1 10 0l44 25c8 4 8 14 0 18zm0-120L274 376c-10 6-23 6-33 0L54 269c-8-4-8-14 0-18l44-25a10 10 0 0 1 10 0l114 65c11 6 23 9 36 9s25-3 36-9l114-65a10 10 0 0 1 10 0l44 25c8 4 8 14 0 18zm-219-13L55 149c-8-4-8-14 0-18L243 24c10-6 23-6 33 0l188 107c8 4 8 14 0 18L276 256c-10 5-23 5-33 0z"
+              })
+              )
+            ),
+            "Generate Package.xml"
+            ),
+            h("button", {
+              onClick: () => model.exportDependencies(),
+              disabled: !model.dependencyResults || (!model.dependencyResults.dependsOn.length && !model.dependencyResults.dependedOnBy.length),
+              className: "slds-button slds-button_neutral"
+            },
+            h("span", {className: ""},
+              h("svg", {
+                viewBox: "0 0 520 520",
+                width: "18",
+                height: "18",
+                fill: "currentColor",
+                className: "dep-icon-inline-margin"
+              },
+              h("path", {
+                d: "M23 379v2c0 8 6 14 14 14 4 0 7-1 10-4 0 0 101-109 225-76v110c0 8 6 14 14 14l7-2 201-171c3-3 5-7 5-11s-2-8-4-10L294 82l-8-2c-8 0-14 6-14 14v103c-1 0-199-30-249 182z"
+              })
+              )
+            ),
+            "Export Summary"
+            )
           )
         ),
         h("div", {id: "dependencies-content", className: "dep-container"},
@@ -2503,18 +2503,18 @@ class App extends React.Component {
               },
               model.dependencyResults.dependedOnBy.length > 0 && h("span", {
                 className: CSSUtils.classNames({
-                  "dep-filter-toggle": true,
-                  "active": model.currentFilter === "dependedOnBy",
-                  "inactive": model.currentFilter !== "dependedOnBy"
+                  "slds-button hover": true,
+                  "slds-button_brand": model.currentFilter === "dependedOnBy",
+                  "slds-button_neutral": model.currentFilter !== "dependedOnBy"
                 }),
                 onClick: () => model.setFilter("dependedOnBy"),
                 title: "Show components that use or rely on this metadata"
               }, `Referenced By (${model.getReferencedByCount()})`),
               model.dependencyResults.dependsOn.length > 0 && h("span", {
                 className: CSSUtils.classNames({
-                  "dep-filter-toggle": true,
-                  "active": model.currentFilter === "dependsOn",
-                  "inactive": model.currentFilter !== "dependsOn"
+                  "slds-button hover": true,
+                  "slds-button_brand": model.currentFilter === "dependsOn",
+                  "slds-button_neutral": model.currentFilter !== "dependsOn"
                 }),
                 onClick: () => model.setFilter("dependsOn"),
                 title: "Show components this metadata requires to function"
@@ -2614,33 +2614,28 @@ class App extends React.Component {
           h("p", {className: "small"}, "This tool automatically shows what your metadata references and what references it.")
           ),
 
-          h("div", {
-            className: "dep-footer"
-          },
+          h("div", {},
           h("div", {
             className: "dep-footer-content"
           },
           h("span", {
-            className: "dep-footer-session"
-          }, model.dependencyTree
-            ? h("span", {},
-                `${model.currentFilter === "dependedOnBy"
+            className: "dep-footer-session dep-footer-clickable",
+            onClick: () => model.toggleJsonDebug(),
+            title: model.showJsonDebug ? "Hide JSON debug data" : "Show JSON debug data",
+            style: { cursor: "pointer" }
+          },
+          model.dependencyTree
+            ? `${model.currentFilter === "dependedOnBy"
+                ? model.getReferencedByCount()
+                : model.getDependsOnCount()
+              } ${
+                (model.currentFilter === "dependedOnBy"
                   ? model.getReferencedByCount()
                   : model.getDependsOnCount()
-                } ${
-                  (model.currentFilter === "dependedOnBy"
-                    ? model.getReferencedByCount()
-                    : model.getDependsOnCount()
-                  ) === 1 ? "item" : "items"
-                } found`
-              )
-            : h("span", {}, "")
+                ) === 1 ? "item" : "items"
+              } found`
+            : ""
           ),
-          h("button", {
-            onClick: () => model.toggleJsonDebug(),
-            className: "slds-button slds-button_neutral",
-            title: model.showJsonDebug ? "Hide JSON debug data" : "Show JSON debug data"
-          }, model.showJsonDebug ? "Hide JSON" : "JSON")
           )
           )
         )
