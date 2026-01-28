@@ -2621,7 +2621,7 @@ class App extends React.Component {
           h("span", {
             className: "slds-badge slds-badge slds-m-right_small slds-m-top_xx-small",
             onClick: () => model.toggleJsonDebug(),
-            title: model.showJsonDebug ? "Click to hide JSON debug data" : "Click to show JSON debug data",
+            title: model.showJsonDebug ? "Click to Hide JSON result" : "Click to Show JSON result",
             style: { cursor: "pointer" }
           },
           model.dependencyTree
