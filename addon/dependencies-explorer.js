@@ -2435,7 +2435,8 @@ class App extends React.Component {
             h("button", {
               onClick: () => model.downloadPackageXml(),
               disabled: !model.dependencyResults || !model.dependencyResults.dependsOn.length || model.currentFilter !== "dependsOn",
-              className: "slds-button slds-button_neutral"
+              className: "slds-button slds-button_neutral",
+              title: "Generate Package.xml file"
             },
             h("span", {className: ""},
               h("svg", {
@@ -2445,9 +2446,7 @@ class App extends React.Component {
                 fill: "currentColor",
                 className: "dep-icon-inline-margin"
               },
-              h("path", {
-                d: "M462 389 274 496c-10 6-23 6-33 0L54 389c-8-4-8-14 0-18l44-25a10 10 0 0 1 10 0l114 65c11 6 23 9 36 9s25-3 36-9l114-65a10 10 0 0 1 10 0l44 25c8 4 8 14 0 18zm0-120L274 376c-10 6-23 6-33 0L54 269c-8-4-8-14 0-18l44-25a10 10 0 0 1 10 0l114 65c11 6 23 9 36 9s25-3 36-9l114-65a10 10 0 0 1 10 0l44 25c8 4 8 14 0 18zm-219-13L55 149c-8-4-8-14 0-18L243 24c10-6 23-6 33 0l188 107c8 4 8 14 0 18L276 256c-10 5-23 5-33 0z"
-              })
+              h("use", { "xlinkHref": "symbols.svg#custom-object" })
               )
             ),
             "Generate Package.xml"
@@ -2455,7 +2454,8 @@ class App extends React.Component {
             h("button", {
               onClick: () => model.exportDependencies(),
               disabled: !model.dependencyResults || (!model.dependencyResults.dependsOn.length && !model.dependencyResults.dependedOnBy.length),
-              className: "slds-button slds-button_neutral"
+              className: "slds-button slds-button_neutral",
+              title: "Export summary as text file"
             },
             h("span", {className: ""},
               h("svg", {
@@ -2465,12 +2465,34 @@ class App extends React.Component {
                 fill: "currentColor",
                 className: "dep-icon-inline-margin"
               },
-              h("path", {
-                d: "M23 379v2c0 8 6 14 14 14 4 0 7-1 10-4 0 0 101-109 225-76v110c0 8 6 14 14 14l7-2 201-171c3-3 5-7 5-11s-2-8-4-10L294 82l-8-2c-8 0-14 6-14 14v103c-1 0-199-30-249 182z"
-              })
+              h("use", { "xlinkHref": "symbols.svg#internal_share" })
               )
             ),
             "Export Summary"
+            ),
+            h("button", {
+              onClick: () => model.toggleJsonDebug(),
+              disabled:
+                !model.dependencyResults ||
+                (!model.dependencyResults.dependsOn.length &&
+                 !model.dependencyResults.dependedOnBy.length),
+              className: "slds-button slds-button_neutral",
+              title: model.showJsonDebug
+                ? "Click to Hide JSON result"
+                : "Click to Show result as JSON"
+            },
+            h("span", { className: "" },
+              h("svg", {
+                viewBox: "0 0 520 520",
+                width: "18",
+                height: "18",
+                fill: "currentColor",
+                className: "dep-icon-inline-margin"
+              },
+                h("use", { "xlinkHref": "symbols.svg#apex-class" })
+              )
+            ),
+            model.showJsonDebug ? "Hide JSON" : "Show JSON"
             )
           )
         ),
@@ -2620,9 +2642,10 @@ class App extends React.Component {
           },
           h("span", {
             className: "slds-badge slds-badge slds-m-right_small slds-m-top_xx-small",
-            onClick: () => model.toggleJsonDebug(),
-            title: model.showJsonDebug ? "Click to Hide JSON result" : "Click to Show JSON result",
-            style: { cursor: "pointer" }
+            //onClick: () => model.toggleJsonDebug(),
+            //title: model.showJsonDebug ? "Click to Hide JSON result" : "Click to Show result as JSON",
+            //style: { cursor: "pointer" }
+            style: { cursor: "default" }
           },
           model.dependencyTree
             ? `${model.currentFilter === "dependedOnBy"
@@ -2632,7 +2655,7 @@ class App extends React.Component {
                 (model.currentFilter === "dependedOnBy"
                   ? model.getReferencedByCount()
                   : model.getDependsOnCount()
-                ) === 1 ? "item" : "items"
+                ) === 1 ? "Item" : "Items"
               } found`
             : ""
           ),

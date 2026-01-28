@@ -286,7 +286,6 @@ h1 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #f8f9fa;
 }
 
 /* ===== ICON STYLES ===== */
@@ -777,7 +776,7 @@ h1 {
 
 .dep-dropdown-trigger:hover {
     border-color: #066afe !important;
-    background-color: #ebebeb !important;
+    background-color: #f3f3f3 !important;
 }
 
 .dep-dropdown-trigger:focus {
@@ -876,12 +875,15 @@ h1 {
 
 /* ===== JSON DEBUG ===== */
 .dep-json-debug {
-    max-height: 400px;
+    max-height: calc(88vh - 200px);
+    min-height: 300px;
     overflow: auto;
-    background: #f8f8f8;
+    background: #fff;
     padding: 1em;
-    border: 1px solid #ddd;
+    border: 1px solid #dee2e6;
     border-radius: 4px;
+    border-top-left-radius: 1.25rem;
+    border-bottom-left-radius: 1.25rem;
     font-size: 12px;
 }
 
