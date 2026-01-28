@@ -2619,9 +2619,9 @@ class App extends React.Component {
             className: "dep-footer-content"
           },
           h("span", {
-            className: "dep-footer-session dep-footer-clickable",
+            className: "slds-badge slds-badge slds-m-right_small slds-m-top_xx-small",
             onClick: () => model.toggleJsonDebug(),
-            title: model.showJsonDebug ? "Hide JSON debug data" : "Show JSON debug data",
+            title: model.showJsonDebug ? "Click to hide JSON debug data" : "Click to show JSON debug data",
             style: { cursor: "pointer" }
           },
           model.dependencyTree
