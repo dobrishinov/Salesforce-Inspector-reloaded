@@ -2599,8 +2599,13 @@ class App extends React.Component {
             ),
 
             model.showJsonDebug && model.getFilteredDependencies().length > 0 ? h("pre", {
-              className: "dep-json-debug"
+              className: "dep-json-debug reset-margin",
+              style: {margin: 0}
+            },
+            h("code", {
+              className: "language-json slds-m-around_xx-small"
             }, JSON.stringify(model.getJsonDebugData(), null, 2))
+            )
 
             : h("div", {
               className: model._showFlatView ? "slds-card dep-content" : "slds-card dep-tree-container"
@@ -2693,7 +2698,12 @@ class App extends React.Component {
     let model = new Model(sfHost, args);
     window.sfConn = sfConn;
     model.reactCallback = cb => {
-      ReactDOM.render(h(App, {model}), root, cb);
+      ReactDOM.render(h(App, {model}), root, () => {
+        if (window.Prism && model.showJsonDebug) {
+          window.Prism.highlightAll();
+        }
+        if (cb) cb();
+      });
     };
     ReactDOM.render(h(App, {model}), root);
 
