@@ -2609,7 +2609,7 @@ class App extends React.Component {
               className: "dep-json-debug reset-margin"
             },
             h("code", {
-              className: "language-json slds-m-around_xx-small"
+              className: "language-json"
             }, JSON.stringify(model.getJsonDebugData(), null, 2))
             )
 

@@ -869,7 +869,17 @@ h1 {
     border-radius: 4px;
     border-top-left-radius: 1.25rem;
     border-bottom-left-radius: 1.25rem;
+    border-top-right-radius: 1.25rem;
+    border-bottom-right-radius: 1.25rem;
     font-size: 12px;
+}
+
+.dep-json-debug > code {
+    border-radius: inherit;
+    border-top-left-radius: 1.25rem;
+    border-bottom-left-radius: 1.25rem;
+    border-top-right-radius: 1.25rem;
+    border-bottom-right-radius: 1.25rem;
 }
 
 /* ===== NESTED GROUP COMPONENTS ===== */
