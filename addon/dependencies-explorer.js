@@ -236,15 +236,17 @@ const Helpers = {
 
 
 class Model {
-  constructor(sfHost) {
+  constructor(sfHost, args) {
     this.sfHost = sfHost;
+    this.args = args || new URLSearchParams();
     this.sfLink = "https://" + sfHost;
     this.spinnerCount = 0;
     this.title = "Dependencies Explorer";
     this.orgName = this.sfHost.split(".")[0]?.toUpperCase() || "";
     this.dependencyTree = null; // Store the fetched dependency tree
     this.dependencyError = null;
-    this.selectedMetadataType = CONFIG.DEFAULT_METADATA_TYPE; // Default metadata type
+    // Read metadata type from URL or use default
+    this.selectedMetadataType = args?.get("metadataType") || CONFIG.DEFAULT_METADATA_TYPE;
     this.availableMetadataItems = []; // Available items for selected type
     this.selectedMetadataItem = null; // Selected item
     this.isLoadingMetadataItems = false; // Loading state for metadata items
@@ -263,7 +265,7 @@ class Model {
     // Initialize user info model - handles all user-related properties
     this.userInfoModel = new UserInfoModel(this.spinFor.bind(this));
 
-    // Load initial metadata items for ApexClass
+    // Load initial metadata items
     this._loadAvailableMetadataItems();
   }
 
@@ -281,16 +283,32 @@ class Model {
     }
   }
 
+  persistParamInUrl(name, value) {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (value) {
+      urlParams.set(name, value);
+    } else {
+      urlParams.delete(name);
+    }
+    window.history.replaceState(null, "", "?" + urlParams.toString());
+  }
 
   setMetadataType(type) {
     this.selectedMetadataType = type;
     this.selectedMetadataItem = null;
     this.availableMetadataItems = [];
+    this.persistParamInUrl("metadataType", type);
+    this.persistParamInUrl("metadataItemId", null); // Clear item when type changes
     this._loadAvailableMetadataItems();
   }
 
   setMetadataItem(item) {
     this.selectedMetadataItem = item;
+    if (item && item.id) {
+      this.persistParamInUrl("metadataItemId", item.id);
+    } else {
+      this.persistParamInUrl("metadataItemId", null);
+    }
     this.didUpdate();
   }
 
@@ -327,6 +345,15 @@ class Model {
     try {
       let items = await this._fetchMetadataItems(this.selectedMetadataType);
       this.availableMetadataItems = items;
+
+      // Restore selected item from URL parameter if present
+      const metadataItemId = this.args?.get("metadataItemId");
+      if (metadataItemId && items.length > 0) {
+        const item = items.find(i => i.id === metadataItemId);
+        if (item) {
+          this.selectedMetadataItem = item;
+        }
+      }
     } catch (error) {
       const handledError = Helpers.handleApiError(error, this.selectedMetadataType);
       this.dependencyError = handledError.message;
