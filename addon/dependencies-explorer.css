@@ -652,7 +652,7 @@ h1 {
 
 .dep-icon-large svg {
     width: 16px;
-    height: 16px;
+    height: 26px;
     vertical-align: middle;
 }
 
@@ -869,17 +869,14 @@ h1 {
     border-radius: 4px;
     border-top-left-radius: 1.25rem;
     border-bottom-left-radius: 1.25rem;
-    border-top-right-radius: 1.25rem;
-    border-bottom-right-radius: 1.25rem;
     font-size: 12px;
 }
 
 .dep-json-debug > code {
+    padding: 0.5rem;
     border-radius: inherit;
     border-top-left-radius: 1.25rem;
     border-bottom-left-radius: 1.25rem;
-    border-top-right-radius: 1.25rem;
-    border-bottom-right-radius: 1.25rem;
 }
 
 /* ===== NESTED GROUP COMPONENTS ===== */
@@ -1030,7 +1027,7 @@ h1 {
 }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width: 1100px) {
+@media (max-width: 1260px) {
     .dep-result-bar {
         flex-direction: column;
         gap: 1em;
@@ -1117,8 +1114,8 @@ h1 {
 }
 
 .dep-tree-icon svg {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 26px;
     vertical-align: middle;
 }
 
