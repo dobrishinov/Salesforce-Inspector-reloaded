@@ -1,6 +1,6 @@
 /* global React ReactDOM */
 import {sfConn, apiVersion} from "./inspector.js";
-import {UserInfoModel, createSpinForMethod, isRecordId} from "./utils.js";
+import {UserInfoModel, createSpinForMethod, isRecordId, generatePackageXml} from "./utils.js";
 import {PageHeader} from "./components/PageHeader.js";
 /* global initButton */
 
@@ -1594,32 +1594,12 @@ ${(() => {
       }
     });
 
-    // Generate the package.xml
-    let packageXml = '<?xml version="1.0" encoding="UTF-8"?>\n';
-    packageXml += '<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n';
-
-    // Sort types alphabetically
-    const sortedTypes = Array.from(metadataByType.entries()).sort(([typeA], [typeB]) => typeA.localeCompare(typeB));
-
-    sortedTypes.forEach(([type, members]) => {
-      if (members.size > 0) {
-        packageXml += "    <types>\n";
-
-        // Sort members alphabetically
-        const sortedMembers = Array.from(members).sort();
-        sortedMembers.forEach(member => {
-          packageXml += `        <members>${member}</members>\n`;
-        });
-
-        packageXml += `        <name>${type}</name>\n`;
-        packageXml += "    </types>\n";
-      }
+    // Generate the package.xml using shared utility
+    return generatePackageXml(metadataByType, {
+      includeXmlDeclaration: true,
+      sortTypes: true,
+      skipEmptyTypes: true
     });
-
-    packageXml += `    <version>${apiVersion}</version>\n`;
-    packageXml += "</Package>";
-
-    return packageXml;
   }
 
   /**
