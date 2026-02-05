@@ -2606,8 +2606,7 @@ class App extends React.Component {
             ),
 
             model.showJsonDebug && model.getFilteredDependencies().length > 0 ? h("pre", {
-              className: "dep-json-debug reset-margin",
-              style: {margin: 0}
+              className: "dep-json-debug reset-margin"
             },
             h("code", {
               className: "language-json slds-m-around_xx-small"
