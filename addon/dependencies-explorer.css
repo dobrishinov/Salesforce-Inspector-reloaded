@@ -47,7 +47,6 @@ h1 {
     margin-top: 15px;
     padding: 12px;
     background-color: #fff;
-    /* border-radius: 4px; */
     border: 1px solid #dee2e6;
 }
 
@@ -57,7 +56,6 @@ h1 {
     justify-content: space-between;
     gap: 2em;
     margin-bottom: 1em;
-    /* padding: 0 8px; */
 }
 
 .dep-controls {
@@ -96,7 +94,6 @@ h1 {
 }
 
 .dep-card-details {
-    /* font-size: 11px; */
     color: #666;
     margin-top: 4px;
     display: flex;
@@ -111,7 +108,6 @@ h1 {
 }
 
 .dep-card-details .dep-card-referenced-label {
-    /* color: #999; */
     font-style: italic;
     font-weight: bold;
 }
@@ -122,7 +118,6 @@ h1 {
 }
 
 .dep-card-details .dep-card-referenced-name {
-    /* color: #2c3e50; */
     font-weight: bold;
 }
 
@@ -214,7 +209,6 @@ h1 {
 
 .dep-group-body {
     padding: 12px;
-    /* background-color: #f8f9fa; */
 }
 
 /* ===== FLAT GROUP STYLES ===== */
@@ -228,7 +222,6 @@ h1 {
 
 .dep-flat-group-header {
     padding: 5px 10px;
-    /* background-color: #f8f9fa; */
     border-bottom: 1px solid #dee2e6;
     border-radius: 6px 6px 0 0;
     cursor: pointer;
@@ -353,9 +346,6 @@ h1 {
 }
 
 /* ===== TYPE COLORS ===== */
-.dep-type-color {
-    /* This will be set dynamically via JavaScript for specific types */
-}
 
 /* ===== DROPDOWN STYLES ===== */
 .dep-dropdown-open {
@@ -434,8 +424,6 @@ h1 {
     padding: 8px 8px 0 8px;
     border-bottom: 1px solid #eee;
 }
-
-
 
 .dep-dropdown-search-input {
     width: 90%;
@@ -678,8 +666,6 @@ h1 {
     vertical-align: middle;
 }
 
-/* ===== CARDS ===== */
-
 /* ===== ANIMATIONS ===== */
 @keyframes dep-bounce {
 
@@ -793,7 +779,6 @@ h1 {
     text-overflow: ellipsis;
     white-space: nowrap;
     display: inline-block;
-    /* max-width: 170px; */
     vertical-align: middle;
 }
 
@@ -1043,13 +1028,11 @@ h1 {
 
     .dep-controls {
         flex-direction: column;
-        /* gap: 0.5em; */
     }
 
     .dep-select,
     .dep-dropdown {
         min-width: 100%;
-        /* max-width: 100%; */
     }
 }
 
@@ -1067,10 +1050,6 @@ h1 {
     position: relative;
 }
 
-.dep-tree-item:hover {
-    /* background-color: #e3f2fd;
-    border-radius: 2px; */
-}
 
 .dep-tree-indent {
     display: flex;
@@ -1102,13 +1081,10 @@ h1 {
 }
 
 .dep-tree-expand {
-    /* width: 16px; */
-    /* height: 16px; */
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    /* color: #066afe; */
     font-size: 16px;
     font-weight: bold;
     margin-right: 4px;
@@ -1122,22 +1098,18 @@ h1 {
 
 .dep-tree-expand:hover {
     color: #005fb8;
-    /* background-color: #e3f2fd; */
-    /* border-radius: 2px; */
 }
 
 .dep-tree-icon {
     font-size: 14px;
     margin-left: 6px;
     margin-right: 3px;
-    /* color: #066afe; */
 }
 
 .dep-tree-icon svg {
     width: 14px;
     height: 14px;
     vertical-align: middle;
-    /* color: inherit; */
 }
 
 .dep-tree-name {
@@ -1154,8 +1126,6 @@ h1 {
     border-radius: 10px;
     font-size: 11px;
     font-weight: bold;
-    /* margin-left: 4px; */
-    /* font-family: 'Courier New', monospace; */
 }
 
 .dep-tree-namespace {
@@ -1166,7 +1136,6 @@ h1 {
     font-size: 9px;
     font-weight: bold;
     margin-left: 4px;
-    /* font-family: 'Courier New', monospace; */
 }
 
 .dep-tree-pills {
@@ -1180,7 +1149,6 @@ h1 {
     border-radius: 2px;
     font-size: 9px;
     border: 1px solid;
-    /* font-family: 'Courier New', monospace; */
 }
 
 .dep-tree-pill.standard {
@@ -1196,11 +1164,6 @@ h1 {
 }
 
 .dep-tree-link {
-    /* color: #066afe;
-    text-decoration: none;
-    font-size: 10px;
-    margin-left: 4px; */
-    /* font-family: 'Courier New', monospace; */
     opacity: 0.7;
     transition: opacity 0.2s ease;
 }
@@ -1310,7 +1273,6 @@ h1 {
 }
 
 .dep-tree-referenced-label {
-    /* color: #999; */
     font-style: italic;
     font-weight: bold;
 }
@@ -1321,6 +1283,5 @@ h1 {
 }
 
 .dep-tree-referenced-name {
-    /* color: #2c3e50; */
     font-weight: bold;
 }

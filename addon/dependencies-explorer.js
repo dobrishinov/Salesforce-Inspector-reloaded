@@ -370,7 +370,7 @@ class Model {
   async _fetchAllToolingQueryRecords(soql) {
     const allRecords = [];
     let queryUrl = `/services/data/v${apiVersion}/tooling/query/?q=` + encodeURIComponent(soql);
-    
+
     while (queryUrl) {
       const res = await sfConn.rest(queryUrl);
       if (res.records) {
@@ -379,7 +379,7 @@ class Model {
       // Check if there are more records to fetch
       queryUrl = res.nextRecordsUrl || null;
     }
-    
+
     return allRecords;
   }
 
@@ -603,8 +603,8 @@ class Model {
   }
 
   /**
-   * Core logic: recursively fetch dependencies and build a tree. 
-   * Inspired by sfdc-soup-master project (https://github.com/pgonzaleznetwork/sfdc-soup), 
+   * Core logic: recursively fetch dependencies and build a tree.
+   * Inspired by sfdc-soup-master project (https://github.com/pgonzaleznetwork/sfdc-soup),
    * using sfConn.rest for SOQL queries.
    */
   async _getDependencies(entryPoint, direction) {
@@ -664,7 +664,7 @@ class Model {
    * Enhance custom field data with object names and field names.
    * Inspired by sfdc-soup-master project (https://github.com/pgonzaleznetwork/sfdc-soup)
    */
-  
+
   async _enhanceCustomFieldData(dependencies) {
     // 1. Collect all CustomField IDs
     let customFieldIds = [];
@@ -1839,8 +1839,8 @@ class App extends React.Component {
       height: "14",
       fill: "currentColor",
       className: "dep-icon-blue-margin"
-      },
-      h("use", {xlinkHref: "symbols.svg#link"})
+    },
+    h("use", {xlinkHref: "symbols.svg#link"})
     ),
     "Open in Salesforce"
     )
@@ -2099,8 +2099,8 @@ class App extends React.Component {
           height: "14",
           fill: "currentColor",
           className: "dep-icon-blue"
-          },
-          h("use", {xlinkHref: "symbols.svg#link"})
+        },
+        h("use", {xlinkHref: "symbols.svg#link"})
         )
         ),
         dep.namespace && h("span", {
@@ -2446,7 +2446,7 @@ class App extends React.Component {
                 fill: "currentColor",
                 className: "dep-icon-inline-margin"
               },
-              h("use", { "xlinkHref": "symbols.svg#custom-object" })
+              h("use", {"xlinkHref": "symbols.svg#custom-object"})
               )
             ),
             "Generate Package.xml"
@@ -2465,7 +2465,7 @@ class App extends React.Component {
                 fill: "currentColor",
                 className: "dep-icon-inline-margin"
               },
-              h("use", { "xlinkHref": "symbols.svg#internal_share" })
+              h("use", {"xlinkHref": "symbols.svg#internal_share"})
               )
             ),
             "Export Summary"
@@ -2473,15 +2473,15 @@ class App extends React.Component {
             h("button", {
               onClick: () => model.toggleJsonDebug(),
               disabled:
-                !model.dependencyResults ||
-                (!model.dependencyResults.dependsOn.length &&
-                 !model.dependencyResults.dependedOnBy.length),
+                !model.dependencyResults
+                || (!model.dependencyResults.dependsOn.length
+                 && !model.dependencyResults.dependedOnBy.length),
               className: "slds-button slds-button_neutral",
               title: model.showJsonDebug
                 ? "Click to Hide JSON result"
                 : "Click to Show result as JSON"
             },
-            h("span", { className: "" },
+            h("span", {className: ""},
               h("svg", {
                 viewBox: "0 0 520 520",
                 width: "18",
@@ -2489,7 +2489,7 @@ class App extends React.Component {
                 fill: "currentColor",
                 className: "dep-icon-inline-margin"
               },
-                h("use", { "xlinkHref": "symbols.svg#apex-class" })
+              h("use", {"xlinkHref": "symbols.svg#apex-class"})
               )
             ),
             model.showJsonDebug ? "Hide JSON" : "Show JSON"
@@ -2637,18 +2637,15 @@ class App extends React.Component {
           ),
 
           h("div", {},
-          h("div", {
-            className: "dep-footer-content"
-          },
-          h("span", {
-            className: "slds-badge slds-badge slds-m-right_small slds-m-top_xx-small",
-            //onClick: () => model.toggleJsonDebug(),
-            //title: model.showJsonDebug ? "Click to Hide JSON result" : "Click to Show result as JSON",
-            //style: { cursor: "pointer" }
-            style: { cursor: "default" }
-          },
-          model.dependencyTree
-            ? `${model.currentFilter === "dependedOnBy"
+            h("div", {
+              className: "dep-footer-content"
+            },
+            h("span", {
+              className: "slds-badge slds-badge slds-m-right_small slds-m-top_xx-small",
+              style: {cursor: "default"}
+            },
+            model.dependencyTree
+              ? `${model.currentFilter === "dependedOnBy"
                 ? model.getReferencedByCount()
                 : model.getDependsOnCount()
               } ${
@@ -2657,9 +2654,9 @@ class App extends React.Component {
                   : model.getDependsOnCount()
                 ) === 1 ? "Item" : "Items"
               } found`
-            : ""
-          ),
-          )
+              : ""
+            ),
+            )
           )
         )
       )
