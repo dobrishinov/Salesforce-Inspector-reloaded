@@ -2,6 +2,7 @@
 
 ## Version 2.0
 
+- Introduce SObjectList cache to prevent request to Salesforce requests to be sent each time the popup opens [issue #437](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/437)
 - `Popup` Support record ID detection in Lightning Setup URLs with address parameter [feature 1099](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/1099)
 - `Data Export` Fix Incorrect SOSL Query stamping when selected from Saved Queries [issue #1075](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/1075) (contribution by [Divyanshu Bist](https://github.com/DivyanshuBist)
 - `Data Import` Fix data import issue with quoted words [issue #748](https://github.com/tprouvot/Salesforce-Inspector-reloaded/issues/748) (contribution by [Maral Zakarian](https://github.com/MaralZak)
