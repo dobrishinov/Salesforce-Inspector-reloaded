@@ -12,24 +12,31 @@ import {PageHeader} from "./components/PageHeader.js";
 const CONFIG = {
   /** @type {Array<{value: string, label: string}>} Available metadata types */
   METADATA_TYPES: [
+    // Code
     {value: "ApexClass", label: "Apex Classes"},
     {value: "ApexTrigger", label: "Apex Triggers"},
-    {value: "CustomObject", label: "Custom Objects, Settings and Metadata Types"},
-    {value: "CustomField", label: "Custom Fields"},
+    // UI Components (Classic)
     {value: "ApexPage", label: "Visualforce Pages"},
     {value: "ApexComponent", label: "Visualforce Components"},
-    {value: "StaticResource", label: "Static Resources"},
+    // UI Components (Lightning)
     {value: "LightningComponent", label: "Lightning Components"},
-    {value: "ValidationRule", label: "Validation Rules"},
-    {value: "CustomLabel", label: "Custom Labels"},
-    {value: "Flow", label: "Flows / Process Builders / Workflows"},
     {value: "LightningWebComponent", label: "Lightning Web Components"},
-    {value: "EmailTemplate", label: "Email Templates"},
-    {value: "WorkflowAlert", label: "Email Alerts"},
-    {value: "WebLink", label: "Custom Buttons (WebLink)"},
+    // Pages & Layouts
     {value: "Layout", label: "Page Layouts"},
     {value: "FlexiPage", label: "Lightning Pages"},
-    {value: "GlobalPicklist", label: "Global Picklists"}
+    // Data Model
+    {value: "CustomObject", label: "Custom Objects, Settings and Metadata Types"},
+    {value: "CustomField", label: "Custom Fields"},
+    {value: "GlobalPicklist", label: "Global Picklists"},
+    {value: "ValidationRule", label: "Validation Rules"},
+    // Automation
+    {value: "Flow", label: "Flows / Process Builders / Workflows"},
+    {value: "WorkflowAlert", label: "Email Alerts"},
+    // Resources & Templates
+    {value: "StaticResource", label: "Static Resources"},
+    {value: "EmailTemplate", label: "Email Templates"},
+    {value: "CustomLabel", label: "Custom Labels"},
+    {value: "WebLink", label: "Custom Buttons (WebLink)"}
   ],
 
   /** @type {Object.<string, string>} Type colors mapping */
