@@ -95,76 +95,76 @@ const Helpers = {
   getTypeIcon(type) {
     const iconMap = {
       // Code-related icons - SLDS patterns
-      "ApexClass": "apex-class",
-      "ApexTrigger": "apex-trigger",
+      "ApexClass": "insert_tag_field",
+      "ApexTrigger": "target_mode",
 
       // Data/Object icons - SLDS patterns
-      "CustomObject": "custom-object",
-      "CustomField": "custom-field",
+      "CustomObject": "standard_objects",
+      "CustomField": "text",
 
       // UI/Page icons - SLDS patterns
-      "ApexPage": "apex-page",
-      "FlexiPage": "flexi-page",
-      "ApexComponent": "apex-component",
+      "ApexPage": "salesforce_page",
+      "FlexiPage": "edit_form",
+      "ApexComponent": "component_customization",
 
       // Resource icons - SLDS patterns
-      "StaticResource": "static-resource",
+      "StaticResource": "puzzle",
 
       // Lightning icons - SLDS patterns
-      "LightningComponent": "lightning-component",
+      "LightningComponent": "connected_apps",
 
       // Picklist/Value icons - SLDS patterns
-      "GlobalValueSet": "global-value-set",
+      "GlobalValueSet": "picklist_choice",
 
       // Package icons - SLDS patterns
-      "Installed Package": "installed-package",
+      "Installed Package": "package_org",
 
       // Security & Permission icons - SLDS patterns
-      "PermissionSet": "permission-set",
+      "PermissionSet": "locker_service_console",
       "Profile": "profile",
       "User": "user",
-      "Role": "role",
+      "Role": "user_role",
 
       // Automation icons - SLDS patterns
-      "ValidationRule": "validation-rule",
-      "WorkflowRule": "workflow-rule",
+      "ValidationRule": "rules",
+      "WorkflowRule": "setup",
       "Flow": "flow",
 
       // Content & Label icons - SLDS patterns
-      "CustomLabel": "custom-label",
+      "CustomLabel": "price_book_entries",
 
       // Layout & Design icons - SLDS patterns
       "Layout": "layout",
 
       // Link & External icons - SLDS patterns
-      "WebLink": "web-link",
+      "WebLink": "link",
 
       // Additional metadata types with SLDS patterns
-      "CustomTab": "custom-tab",
-      "CustomApplication": "custom-application",
-      "CustomPermission": "custom-permission",
-      "CustomSite": "custom-site",
-      "FieldPermissions": "field-permissions",
-      "ObjectPermissions": "object-permissions",
-      "TabDefinition": "tab",
-      "TabSet": "tab",
-      "TabSetMember": "tab",
-      "LightningPage": "lightning-page",
-      "LightningComponentBundle": "lightning-component",
-      "AuraDefinitionBundle": "lightning-component",
-      "ContactPointTypeConsent": "contact-point",
-      "ContactPointType": "contact-point",
-      "ContactPointEmail": "contact-point",
-      "ContactPointPhone": "contact-point",
-      "ContactPointAddress": "contact-point",
-      "ContactPointConsent": "contact-point",
-      "ContactPointTypeConsentHistory": "contact-point",
-      "ContactPointTypeConsentShare": "contact-point",
-      "ContactPointTypeConsentFeed": "contact-point"
+      "CustomTab": "tabset",
+      "CustomApplication": "custom_apps",
+      "CustomPermission": "key",
+      "CustomSite": "builder",
+      "FieldPermissions": "lock",
+      "ObjectPermissions": "locked_with_additions",
+      "TabDefinition": "side_list",
+      "TabSet": "side_list",
+      "TabSetMember": "side_list",
+      "LightningPage": "lightning_extension",
+      "LightningComponentBundle": "connected_apps",
+      "AuraDefinitionBundle": "connected_apps",
+      "ContactPointTypeConsent": "identity",
+      "ContactPointType": "identity",
+      "ContactPointEmail": "identity",
+      "ContactPointPhone": "identity",
+      "ContactPointAddress": "identity",
+      "ContactPointConsent": "identity",
+      "ContactPointTypeConsentHistory": "identity",
+      "ContactPointTypeConsentShare": "identity",
+      "ContactPointTypeConsentFeed": "identity"
     };
 
     // Default SLDS document icon for unknown metadata types
-    const defaultIcon = "default-path-icon";
+    const defaultIcon = "salesforce1";
 
     const metadataIcon = iconMap[type] || defaultIcon;
 
@@ -2453,7 +2453,7 @@ class App extends React.Component {
                 fill: "currentColor",
                 className: "dep-icon-inline-margin"
               },
-              h("use", {"xlinkHref": "symbols.svg#custom-object"})
+              h("use", {"xlinkHref": "symbols.svg#overflow"})
               )
             ),
             "Generate Package.xml"
@@ -2496,7 +2496,7 @@ class App extends React.Component {
                 fill: "currentColor",
                 className: "dep-icon-inline-margin"
               },
-              h("use", {"xlinkHref": "symbols.svg#apex-class"})
+              h("use", {"xlinkHref": "symbols.svg#preview"})
               )
             ),
             model.showJsonDebug ? "Hide JSON" : "Show JSON"
@@ -2575,9 +2575,7 @@ class App extends React.Component {
               fill: "currentColor",
               className: "dep-icon-inline-margin-large"
             },
-            h("path", {
-              d: "M282 210a10 10 0 0 0-14 0L29 449a29 29 0 0 0 0 42c12 12 30 12 42 0l239-239c4-4 4-10 0-14l-28-28zm70 0 32-32c6-6 6-15 0-21l-21-21c-6-6-15-6-21 0l-32 32a10 10 0 0 0 0 14l28 28c4 4 10 4 14 0zm-248-94a120 120 0 0 1 80 80c2 6 10 6 12 0a120 120 0 0 1 80-80c6-2 6-10 0-12a120 120 0 0 1-80-80 6 6 0 0 0-12 0 120 120 0 0 1-80 80c-5 2-5 10 0 12zm392 189a110 110 0 0 1-71-71 6 6 0 0 0-11 0 110 110 0 0 1-71 71c-5 2-5 9 0 11a110 110 0 0 1 71 71c2 5 9 5 11 0a110 110 0 0 1 71-71c5-2 5-10 0-11zM383 84c26 8 45 27 53 53 1 4 7 4 8 0a78 78 0 0 1 53-53c4-1 4-7 0-8a78 78 0 0 1-53-53c-1-4-7-4-8 0a78 78 0 0 1-53 53c-4 1-4 7 0 8z"
-            })
+            h("use", {"xlinkHref": "symbols.svg#magicwand"})
             ),
             "Quick Summary"
             ),
@@ -2597,9 +2595,7 @@ class App extends React.Component {
               fill: "currentColor",
               className: "dep-icon-inline-margin-large"
             },
-            h("path", {
-              d: "M231 230H108c-7 0-14 6-14 13v105H53c-7 0-14 7-14 14v100c0 7 7 14 14 14h137c7 0 14-7 14-14V362c0-7-7-14-14-14h-41v-64h219v64h-41c-7 0-14 7-14 14v100c0 7 7 14 14 14h137c7 0 13-7 13-14V362c0-7-6-14-13-14h-42V243c0-7-7-13-14-13H286v-64h41c7 0 13-7 13-14V52c0-7-6-14-13-14H190c-7 0-14 7-14 14v100c0 7 7 14 14 14h42v64z"
-            })
+            h("use", {"xlinkHref": "symbols.svg#hierarchy"})
             ),
             "Dependency Tree"
             )
