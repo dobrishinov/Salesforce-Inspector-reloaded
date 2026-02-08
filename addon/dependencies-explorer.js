@@ -1839,26 +1839,32 @@ class App extends React.Component {
       }
     };
 
-    // Local function to create Salesforce link
-    const createSalesforceLink = (dep, model) => h("div", {
-      className: "dep-card-link"
-    },
-    h("a", {
-      href: model.generateSalesforceUrl(dep),
-      target: "_blank"
-    },
-    h("svg", {
-      viewBox: "0 0 520 520",
-      width: "14",
-      height: "14",
-      fill: "currentColor",
-      className: "dep-icon-blue-margin"
-    },
-    h("use", {xlinkHref: "symbols.svg#link"})
-    ),
-    "Open in Salesforce"
-    )
-    );
+    // Local function to create Salesforce link (or unclickable label when no URL)
+    const createSalesforceLink = (dep, model) => {
+      const url = model.generateSalesforceUrl(dep);
+      const linkContent = [
+        h("svg", {
+          viewBox: "0 0 520 520",
+          width: "14",
+          height: "14",
+          fill: "currentColor",
+          className: "dep-icon-blue-margin"
+        },
+        h("use", {xlinkHref: "symbols.svg#link"})
+        ),
+        "Open in Salesforce"
+      ];
+      return h("div", {
+        className: CSSUtils.classNames({
+          "dep-card-link": true,
+          "dep-card-link-unavailable": !url
+        })
+      },
+      url
+        ? h("a", { href: url, target: "_blank" }, linkContent)
+        : h("span", { className: "dep-card-link-text", title: "Open in Salesforce is not available for this metadata type" }, linkContent)
+      );
+    };
 
     const renderDependencyItem = (dep, index) => {
       const getTypeIcon = Helpers.getTypeIcon;
@@ -2099,24 +2105,31 @@ class App extends React.Component {
           className: "dep-tree-name dep-type-color",
           style: {color: getTypeColor(dep.type)}
         }, dep.name),
-        // Add link for individual items with IDs
-        dep.id && h("a", {
-          href: model.generateSalesforceUrl(dep),
-          target: "_blank",
-          className: "dep-tree-link",
-          title: "Open in Salesforce",
-          onClick: (e) => e.stopPropagation()
-        },
-        h("svg", {
-          viewBox: "0 0 520 520",
-          width: "14",
-          height: "14",
-          fill: "currentColor",
-          className: "dep-icon-blue"
-        },
-        h("use", {xlinkHref: "symbols.svg#link"})
-        )
-        ),
+        // Add link for individual items with IDs (or unclickable icon when no URL)
+        dep.id && (() => {
+          const url = model.generateSalesforceUrl(dep);
+          const icon = h("svg", {
+            viewBox: "0 0 520 520",
+            width: "14",
+            height: "14",
+            fill: "currentColor",
+            className: "dep-icon-blue"
+          },
+          h("use", {xlinkHref: "symbols.svg#link"})
+          );
+          return url
+            ? h("a", {
+                href: url,
+                target: "_blank",
+                className: "dep-tree-link",
+                title: "Open in Salesforce",
+                onClick: (e) => e.stopPropagation()
+              }, icon)
+            : h("span", {
+                className: "dep-tree-link dep-tree-link-unavailable",
+                title: "Open in Salesforce is not available for this metadata type"
+              }, icon);
+        })(),
         dep.namespace && h("span", {
           className: "dep-tree-namespace"
         }, dep.namespace),
@@ -2534,21 +2547,29 @@ class App extends React.Component {
               h("h3", {
                 className: "dep-section-title"
               },
-              model.lastAnalyzedItem && model.lastAnalyzedItem.id
-                ? [
+              (() => {
+                const item = model.lastAnalyzedItem;
+                if (!item || !item.id) {
+                  return `${item ? item.fullName : ""} — ${model.selectedMetadataType} Dependencies`;
+                }
+                const url = model.generateSalesforceUrl({
+                  id: item.id,
+                  type: item.type,
+                  name: item.fullName
+                });
+                if (url) {
+                  return [
                     h("a", {
-                      href: model.generateSalesforceUrl({
-                        id: model.lastAnalyzedItem.id,
-                        type: model.lastAnalyzedItem.type,
-                        name: model.lastAnalyzedItem.fullName
-                      }),
+                      href: url,
                       target: "_blank",
                       className: "dep-section-title-link",
                       title: "Open in Salesforce"
-                    }, model.lastAnalyzedItem.fullName),
+                    }, item.fullName),
                     ` — ${model.selectedMetadataType} Dependencies`
-                  ]
-                : `${model.lastAnalyzedItem ? model.lastAnalyzedItem.fullName : ""} — ${model.selectedMetadataType} Dependencies`
+                  ];
+                }
+                return `${item.fullName} — ${model.selectedMetadataType} Dependencies`;
+              })()
               ),
               h("div", {
                 className: "dep-section-subtitle"
