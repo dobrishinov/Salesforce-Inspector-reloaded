@@ -250,12 +250,13 @@ h1 {
 
 /* ===== NAMESPACE BADGES ===== */
 .dep-namespace-badge {
-    background-color: #e1f5fe;
-    color: #0277bd;
+    background-color: #196cfb;
+    color: #ffffff;
     padding: 1px 4px;
     border-radius: 2px;
     font-size: 10px;
     font-weight: bold;
+    cursor: pointer;
 }
 
 /* ===== PILLS ===== */
@@ -320,6 +321,7 @@ h1 {
     display: inline-block;
     vertical-align: middle;
     color: #18325b;
+    margin-bottom: 2px;
 }
 
 .dep-icon-blue-margin {
@@ -1153,13 +1155,14 @@ h1 {
 }
 
 .dep-tree-namespace {
-    background-color: #e1f5fe;
-    color: #0277bd;
+    background-color: #196cfb;
+    color: #ffffff;
     padding: 1px 4px;
     border-radius: 2px;
-    font-size: 9px;
+    font-size: 10px;
     font-weight: bold;
-    margin-left: 4px;
+    cursor: pointer;
+    margin-left: 0 2px 0 0;
 }
 
 .dep-tree-pills {

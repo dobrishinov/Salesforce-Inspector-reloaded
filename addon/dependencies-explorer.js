@@ -1915,7 +1915,8 @@ class App extends React.Component {
           className: "dep-card-title"
         }, dep.referencedBy.name),
         dep.namespace && h("span", {
-          className: "dep-namespace-badge"
+          className: "dep-namespace-badge",
+          title: `Namespace: ${dep.namespace}`
         }, dep.namespace)
         ),
         h("div", {
@@ -1962,7 +1963,8 @@ class App extends React.Component {
           className: "dep-card-title"
         }, dep.name),
         dep.namespace && h("span", {
-          className: "dep-namespace-badge"
+          className: "dep-namespace-badge",
+          title: `Namespace: ${dep.namespace}`
         }, dep.namespace)
         ),
         groupedChildren.length > 0 && h("span", {
@@ -2134,6 +2136,10 @@ class App extends React.Component {
           className: "dep-tree-name dep-type-color",
           style: {color: getTypeColor(dep.type)}
         }, dep.name),
+        dep.namespace && h("span", {
+          className: "dep-tree-namespace",
+          title: `Namespace: ${dep.namespace}`
+        }, dep.namespace),
         // Add link for individual items with IDs (or unclickable icon when no URL)
         dep.id && (() => {
           const url = model.generateSalesforceUrl(dep);
@@ -2160,9 +2166,6 @@ class App extends React.Component {
                 onClick: (e) => e.stopPropagation()
               }, icon);
         })(),
-        dep.namespace && h("span", {
-          className: "dep-tree-namespace"
-        }, dep.namespace),
         dep.pills && h("div", {
           className: "dep-tree-pills"
         }, dep.pills.map((pill, pillIndex) =>
@@ -2341,7 +2344,8 @@ class App extends React.Component {
         className: "dep-card-title"
       }, dep.name),
       dep.namespace && h("span", {
-        className: "dep-namespace-badge"
+        className: "dep-namespace-badge",
+        title: `Namespace: ${dep.namespace}`
       }, dep.namespace)
       )
       ),
