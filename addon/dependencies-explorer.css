@@ -1200,7 +1200,6 @@ h1 {
 .dep-tree-link-unavailable {
     cursor: default;
     opacity: 0.5;
-    pointer-events: none;
 }
 
 .dep-tree-link-unavailable:hover {

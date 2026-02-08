@@ -396,6 +396,11 @@ class Model {
     return queries[metadataType] || "";
   }
 
+  /** Max items per IN clause to avoid HTTP 414 URI Too Long (servers often limit ~2k–4k chars). */
+  static get TOOLING_QUERY_BATCH_SIZE() {
+    return 100;
+  }
+
   /**
    * Fetches all records from a Salesforce Tooling API query, handling pagination via nextRecordsUrl.
    * @param {string} soql - The SOQL query string
@@ -414,6 +419,25 @@ class Model {
       queryUrl = res.nextRecordsUrl || null;
     }
 
+    return allRecords;
+  }
+
+  /**
+   * Runs a Tooling API query in batches when the IN (...) list would be too long (avoids HTTP 414).
+   * @param {Array<string>} values - Values for the IN clause (e.g. IDs or names)
+   * @param {function(Array<string>): string} buildSoql - Given a chunk of values, returns the full SOQL
+   * @returns {Promise<Array>} Combined records from all batches
+   */
+  async _fetchToolingQueryBatched(values, buildSoql) {
+    if (!values.length) return [];
+    const batchSize = this.constructor.TOOLING_QUERY_BATCH_SIZE;
+    const allRecords = [];
+    for (let i = 0; i < values.length; i += batchSize) {
+      const chunk = values.slice(i, i + batchSize);
+      const soql = buildSoql(chunk);
+      const records = await this._fetchAllToolingQueryRecords(soql);
+      allRecords.push(...records);
+    }
     return allRecords;
   }
 
@@ -466,9 +490,10 @@ class Model {
 
     let objectNamesById = {};
     if (objectIds.length) {
-      // Fetch object names for these IDs
-      let soqlObj = `SELECT Id, DeveloperName FROM CustomObject WHERE Id IN ('${objectIds.join("','")}')`;
-      let objRecords = await this._fetchAllToolingQueryRecords(soqlObj);
+      // Fetch object names in batches to avoid HTTP 414 URI Too Long
+      const objRecords = await this._fetchToolingQueryBatched(objectIds, chunk =>
+        `SELECT Id, DeveloperName FROM CustomObject WHERE Id IN ('${chunk.join("','")}')`
+      );
       objRecords.forEach(obj => {
         objectNamesById[obj.Id] = obj.DeveloperName;
       });
@@ -642,23 +667,19 @@ class Model {
    * using sfConn.rest for SOQL queries.
    */
   async _getDependencies(entryPoint, direction) {
-    // Helper to run SOQL via Tooling API
-    const runToolingQuery = async (soql) => sfConn.rest(
-      `/services/data/v${apiVersion}/tooling/query/?q=` + encodeURIComponent(soql)
-    );
-    // Recursive query logic
     const result = [];
     const idsAlreadyQueried = new Set();
-    const sfLink = this.sfLink; // capture for closure
-    const self = this; // capture 'this' for the closure
+    const idField = direction === "dependsOn" ? "MetadataComponentId" : "RefMetadataComponentId";
+    const self = this;
+
     async function exec(ids) {
       const idsArr = Array.isArray(ids) ? ids : [ids];
       idsArr.forEach(id => idsAlreadyQueried.add(id));
-      // Direction logic
-      let idField = direction === "dependsOn" ? "MetadataComponentId" : "RefMetadataComponentId";
-      const soql = `SELECT MetadataComponentId, MetadataComponentName, MetadataComponentType, RefMetadataComponentName, RefMetadataComponentType, RefMetadataComponentId, RefMetadataComponentNamespace FROM MetadataComponentDependency WHERE ${idField} IN ('${idsArr.join("','")}') AND MetadataComponentType != 'FlexiPage' ORDER BY MetadataComponentName, RefMetadataComponentType`;
-      const rawResults = await runToolingQuery(soql);
-      const dependencies = rawResults.records.map(dep => {
+      // Batch queries to avoid HTTP 414 URI Too Long when many IDs
+      const allRecords = await self._fetchToolingQueryBatched(idsArr, chunk =>
+        `SELECT MetadataComponentId, MetadataComponentName, MetadataComponentType, RefMetadataComponentName, RefMetadataComponentType, RefMetadataComponentId, RefMetadataComponentNamespace FROM MetadataComponentDependency WHERE ${idField} IN ('${chunk.join("','")}') AND MetadataComponentType != 'FlexiPage' ORDER BY MetadataComponentName, RefMetadataComponentType`
+      );
+      const dependencies = allRecords.map(dep => {
         const dependency = {
           name: dep.RefMetadataComponentName,
           type: dep.RefMetadataComponentType,
@@ -831,11 +852,11 @@ class Model {
   }
   async _getFieldToEntityMap(customFieldIds) {
     if (!customFieldIds.length) return {};
-    // SOQL: SELECT Id, TableEnumOrId FROM CustomField WHERE Id IN (...)
-    let soql = `SELECT Id, TableEnumOrId FROM CustomField WHERE Id IN ('${customFieldIds.join("','")}')`;
-    let records = await this._fetchAllToolingQueryRecords(soql);
-    let map = {};
-    for (let rec of records) map[rec.Id] = rec.TableEnumOrId;
+    const records = await this._fetchToolingQueryBatched(customFieldIds, chunk =>
+      `SELECT Id, TableEnumOrId FROM CustomField WHERE Id IN ('${chunk.join("','")}')`
+    );
+    const map = {};
+    for (const rec of records) map[rec.Id] = rec.TableEnumOrId;
     return map;
   }
   async _getObjectNamesById(objectIds) {
@@ -850,13 +871,13 @@ class Model {
 
     if (!validObjectIds.length) return {};
 
-    // Use Tooling API to get object names by ID
-    let soql = `SELECT Id, DeveloperName, NamespacePrefix FROM CustomObject WHERE Id IN ('${validObjectIds.join("','")}')`;
     try {
-      let records = await this._fetchAllToolingQueryRecords(soql);
-      let map = {};
-      for (let rec of records) {
-        let name = rec.NamespacePrefix ? `${rec.NamespacePrefix}__${rec.DeveloperName}` : rec.DeveloperName;
+      const records = await this._fetchToolingQueryBatched(validObjectIds, chunk =>
+        `SELECT Id, DeveloperName, NamespacePrefix FROM CustomObject WHERE Id IN ('${chunk.join("','")}')`
+      );
+      const map = {};
+      for (const rec of records) {
+        const name = rec.NamespacePrefix ? `${rec.NamespacePrefix}__${rec.DeveloperName}` : rec.DeveloperName;
         map[rec.Id] = name;
       }
       return map;
@@ -867,29 +888,35 @@ class Model {
   }
   async _getObjectIdsByName(objectNames) {
     if (!objectNames.length) return {};
-    // SOQL: SELECT Id, DeveloperName, NamespacePrefix FROM CustomObject WHERE (DeveloperName, NamespacePrefix) IN (...)
-    // We'll need to split names with namespace and without
-    let namesWithNs = objectNames.filter(n => n.includes("__"));
-    let namesNoNs = objectNames.filter(n => !n.includes("__"));
-    let clauses = [];
+    const namesWithNs = objectNames.filter(n => n.includes("__"));
+    const namesNoNs = objectNames.filter(n => !n.includes("__"));
+    const map = {};
+    // Batch namespace-less names to avoid URI length limit
     if (namesNoNs.length) {
-      clauses.push(`(NamespacePrefix = null AND DeveloperName IN ('${namesNoNs.join("','")}'))`);
+      const records = await this._fetchToolingQueryBatched(namesNoNs, chunk =>
+        `SELECT Id, DeveloperName, NamespacePrefix FROM CustomObject WHERE NamespacePrefix = null AND DeveloperName IN ('${chunk.join("','")}')`
+      );
+      for (const rec of records) {
+        const name = rec.NamespacePrefix ? `${rec.NamespacePrefix}__${rec.DeveloperName}` : rec.DeveloperName;
+        map[name] = rec.Id;
+      }
     }
+    // Batch namespace names (each clause is longer; use smaller effective batch via chunked OR clauses)
     if (namesWithNs.length) {
-      // For names with namespace, split and match
-      let nsClauses = namesWithNs.map(n => {
-        let [ns, dev] = n.split("__");
-        return `(NamespacePrefix = '${ns}' AND DeveloperName = '${dev}')`;
-      });
-      clauses.push(nsClauses.join(" OR "));
-    }
-    let where = clauses.length ? `WHERE ${clauses.join(" OR ")}` : "";
-    let soql = `SELECT Id, DeveloperName, NamespacePrefix FROM CustomObject ${where}`;
-    let records = await this._fetchAllToolingQueryRecords(soql);
-    let map = {};
-    for (let rec of records) {
-      let name = rec.NamespacePrefix ? `${rec.NamespacePrefix}__${rec.DeveloperName}` : rec.DeveloperName;
-      map[name] = rec.Id;
+      const batchSize = this.constructor.TOOLING_QUERY_BATCH_SIZE;
+      for (let i = 0; i < namesWithNs.length; i += batchSize) {
+        const chunk = namesWithNs.slice(i, i + batchSize);
+        const nsClauses = chunk.map(n => {
+          const [ns, dev] = n.split("__");
+          return `(NamespacePrefix = '${ns}' AND DeveloperName = '${dev}')`;
+        });
+        const soql = `SELECT Id, DeveloperName, NamespacePrefix FROM CustomObject WHERE ${nsClauses.join(" OR ")}`;
+        const records = await this._fetchAllToolingQueryRecords(soql);
+        for (const rec of records) {
+          const name = rec.NamespacePrefix ? `${rec.NamespacePrefix}__${rec.DeveloperName}` : rec.DeveloperName;
+          map[name] = rec.Id;
+        }
+      }
     }
     return map;
   }
@@ -907,9 +934,10 @@ class Model {
       // If name is "Object.Field", extract just the field part
       name.includes(".") ? name.split(".")[1] : name
     );
-    let soql = `SELECT DeveloperName, ReferenceTo, ValueSet, TableEnumOrId FROM CustomField WHERE DeveloperName IN ('${fieldNamesOnly.join("','")}')`;
     try {
-      let records = await this._fetchAllToolingQueryRecords(soql);
+      const records = await this._fetchToolingQueryBatched(fieldNamesOnly, chunk =>
+        `SELECT DeveloperName, ReferenceTo, ValueSet, TableEnumOrId FROM CustomField WHERE DeveloperName IN ('${chunk.join("','")}')`
+      );
       // Map back to include full name for processing
       records.forEach(rec => {
         rec.fullName = rec.DeveloperName; // For compatibility with existing logic
@@ -1844,6 +1872,7 @@ class App extends React.Component {
       const url = model.generateSalesforceUrl(dep);
       const linkContent = [
         h("svg", {
+          key: "link-icon",
           viewBox: "0 0 520 520",
           width: "14",
           height: "14",
@@ -1852,7 +1881,7 @@ class App extends React.Component {
         },
         h("use", {xlinkHref: "symbols.svg#link"})
         ),
-        "Open in Salesforce"
+        h("span", { key: "link-label" }, "Open in Salesforce")
       ];
       return h("div", {
         className: CSSUtils.classNames({
@@ -2127,7 +2156,8 @@ class App extends React.Component {
               }, icon)
             : h("span", {
                 className: "dep-tree-link dep-tree-link-unavailable",
-                title: "Open in Salesforce is not available for this metadata type"
+                title: "Open in Salesforce is not available for this metadata type",
+                onClick: (e) => e.stopPropagation()
               }, icon);
         })(),
         dep.namespace && h("span", {
@@ -2560,12 +2590,13 @@ class App extends React.Component {
                 if (url) {
                   return [
                     h("a", {
+                      key: "dep-section-title-link",
                       href: url,
                       target: "_blank",
                       className: "dep-section-title-link",
                       title: "Open in Salesforce"
                     }, item.fullName),
-                    ` — ${model.selectedMetadataType} Dependencies`
+                    h("span", { key: "dep-section-title-suffix" }, ` — ${model.selectedMetadataType} Dependencies`)
                   ];
                 }
                 return `${item.fullName} — ${model.selectedMetadataType} Dependencies`;
