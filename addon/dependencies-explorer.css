@@ -716,6 +716,14 @@ h1 {
     opacity: 0.8;
 }
 
+.dep-section-title-link {
+    text-decoration: none;
+}
+
+.dep-section-title-link:hover {
+    text-decoration: underline;
+}
+
 .dep-section-subtitle {
     margin: 14px 0 6px 0;
     color: #666;

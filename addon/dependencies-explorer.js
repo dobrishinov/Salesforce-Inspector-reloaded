@@ -2533,7 +2533,23 @@ class App extends React.Component {
             h("div", {},
               h("h3", {
                 className: "dep-section-title"
-              }, `${model.lastAnalyzedItem ? model.lastAnalyzedItem.fullName : ""} — ${model.selectedMetadataType} Dependencies`),
+              },
+              model.lastAnalyzedItem && model.lastAnalyzedItem.id
+                ? [
+                    h("a", {
+                      href: model.generateSalesforceUrl({
+                        id: model.lastAnalyzedItem.id,
+                        type: model.lastAnalyzedItem.type,
+                        name: model.lastAnalyzedItem.fullName
+                      }),
+                      target: "_blank",
+                      className: "dep-section-title-link",
+                      title: "Open in Salesforce"
+                    }, model.lastAnalyzedItem.fullName),
+                    ` — ${model.selectedMetadataType} Dependencies`
+                  ]
+                : `${model.lastAnalyzedItem ? model.lastAnalyzedItem.fullName : ""} — ${model.selectedMetadataType} Dependencies`
+              ),
               h("div", {
                 className: "dep-section-subtitle"
               },
