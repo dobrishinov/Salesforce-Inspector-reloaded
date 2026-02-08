@@ -1183,7 +1183,7 @@ class Model {
       return items.filter(item =>
         (item.fullName || item.name).toLowerCase().includes(lower)
       );
-    }, [searchTerm, this._excludeExternalPackages, this.availableMetadataItems.length]);
+    }, [searchTerm, this._excludeExternalPackages, this.selectedMetadataType, this.availableMetadataItems.length]);
   }
 
   // For custom dropdown state
