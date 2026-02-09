@@ -599,12 +599,6 @@ h1 {
     color: #999;
 }
 
-/* ===== FILTER TOGGLES ===== */
-.hover {
-    cursor: pointer;
-    margin: 0 5px;
-}
-
 /* ===== VIEW TOGGLE ===== */
 .dep-view-toggle {
     cursor: pointer;
@@ -708,14 +702,21 @@ h1 {
     font-size: 16px;
     line-height: 1.3;
     letter-spacing: -0.02em;
-    border-bottom: 2px solid #e1e8ed;
     padding-bottom: 8px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: space-between;
+    gap: 16px;
 }
 
-.dep-section-title::before {
+.dep-section-title-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.dep-section-title-content::before {
     content: "";
     width: 20px;
     height: 20px;
@@ -725,6 +726,7 @@ h1 {
     background-repeat: no-repeat;
     background-position: center;
     opacity: 0.8;
+    flex-shrink: 0;
 }
 
 .dep-section-title-link {
@@ -739,6 +741,23 @@ h1 {
     margin: 14px 0 6px 0;
     color: #666;
     font-size: 14px;
+}
+
+.dep-filter-badges {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dep-filter-badges .slds-badge {
+    cursor: pointer;
+}
+
+.dep-filter-badges .slds-theme_info .slds-badge {
+    --slds-c-badge-color-background: var(--slds-g-color-info-container-1);
+    --slds-c-badge-text-color: var(--slds-g-color-on-info-1);
+    --slds-c-badge-color-border: transparent;
 }
 
 /* ===== FOOTER ===== */

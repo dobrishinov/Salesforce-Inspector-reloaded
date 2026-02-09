@@ -1881,7 +1881,7 @@ class App extends React.Component {
         },
         h("use", {xlinkHref: "symbols.svg#link"})
         ),
-        h("span", { key: "link-label" }, "Open in Salesforce")
+        h("span", {key: "link-label"}, "Open in Salesforce")
       ];
       return h("div", {
         className: CSSUtils.classNames({
@@ -1890,8 +1890,8 @@ class App extends React.Component {
         })
       },
       url
-        ? h("a", { href: url, target: "_blank" }, linkContent)
-        : h("span", { className: "dep-card-link-text", title: "Open in Salesforce is not available for this metadata type" }, linkContent)
+        ? h("a", {href: url, target: "_blank"}, linkContent)
+        : h("span", {className: "dep-card-link-text", title: "Open in Salesforce is not available for this metadata type"}, linkContent)
       );
     };
 
@@ -2154,17 +2154,17 @@ class App extends React.Component {
           );
           return url
             ? h("a", {
-                href: url,
-                target: "_blank",
-                className: "dep-tree-link",
-                title: "Open in Salesforce",
-                onClick: (e) => e.stopPropagation()
-              }, icon)
+              href: url,
+              target: "_blank",
+              className: "dep-tree-link",
+              title: "Open in Salesforce",
+              onClick: (e) => e.stopPropagation()
+            }, icon)
             : h("span", {
-                className: "dep-tree-link dep-tree-link-unavailable",
-                title: "Open in Salesforce is not available for this metadata type",
-                onClick: (e) => e.stopPropagation()
-              }, icon);
+              className: "dep-tree-link dep-tree-link-unavailable",
+              title: "Open in Salesforce is not available for this metadata type",
+              onClick: (e) => e.stopPropagation()
+            }, icon);
         })(),
         dep.pills && h("div", {
           className: "dep-tree-pills"
@@ -2581,6 +2581,9 @@ class App extends React.Component {
               h("h3", {
                 className: "dep-section-title"
               },
+              h("span", {
+                className: "dep-section-title-content"
+              },
               (() => {
                 const item = model.lastAnalyzedItem;
                 if (!item || !item.id) {
@@ -2600,34 +2603,85 @@ class App extends React.Component {
                       className: "dep-section-title-link",
                       title: "Open in Salesforce"
                     }, item.fullName),
-                    h("span", { key: "dep-section-title-suffix" }, ` — ${model.selectedMetadataType} Dependencies`)
+                    h("span", {key: "dep-section-title-suffix"}, ` — ${model.selectedMetadataType} Dependencies`)
                   ];
                 }
                 return `${item.fullName} — ${model.selectedMetadataType} Dependencies`;
               })()
               ),
-              h("div", {
-                className: "dep-section-subtitle"
+              (model.dependencyResults.dependedOnBy.length > 0 || model.dependencyResults.dependsOn.length > 0) && h("div", {
+                className: "dep-filter-badges"
               },
-              model.dependencyResults.dependedOnBy.length > 0 && h("span", {
-                className: CSSUtils.classNames({
-                  "slds-button hover": true,
-                  "slds-button_brand": model.currentFilter === "dependedOnBy",
-                  "slds-button_neutral": model.currentFilter !== "dependedOnBy"
-                }),
+              model.dependencyResults.dependedOnBy.length > 0 && (model.currentFilter === "dependedOnBy" ? h("div", {
+                key: "dependedOnBy-wrapper",
+                className: "slds-theme_info"
+              },
+              h("span", {
+                key: "dependedOnBy",
+                className: "slds-badge",
                 onClick: () => model.setFilter("dependedOnBy"),
-                title: "Show components that use or rely on this metadata"
-              }, `Referenced By (${model.getReferencedByCount()})`),
-              model.dependencyResults.dependsOn.length > 0 && h("span", {
-                className: CSSUtils.classNames({
-                  "slds-button hover": true,
-                  "slds-button_brand": model.currentFilter === "dependsOn",
-                  "slds-button_neutral": model.currentFilter !== "dependsOn"
-                }),
+                title: "Show components that use or rely on this metadata",
+                role: "button",
+                tabIndex: 0,
+                onKeyDown: (e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    model.setFilter("dependedOnBy");
+                  }
+                }
+              }, `Referenced By (${model.getReferencedByCount()})`)
+              ) : h("span", {
+                key: "dependedOnBy",
+                className: "slds-badge slds-badge_lightest",
+                onClick: () => model.setFilter("dependedOnBy"),
+                title: "Show components that use or rely on this metadata",
+                role: "button",
+                tabIndex: 0,
+                onKeyDown: (e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    model.setFilter("dependedOnBy");
+                  }
+                }
+              }, `Referenced By (${model.getReferencedByCount()})`)
+              ),
+              model.dependencyResults.dependsOn.length > 0 && (model.currentFilter === "dependsOn" ? h("div", {
+                key: "dependsOn-wrapper",
+                className: "slds-theme_info"
+              },
+              h("span", {
+                key: "dependsOn",
+                className: "slds-badge",
                 onClick: () => model.setFilter("dependsOn"),
-                title: "Show components this metadata requires to function"
-              }, `Depends On (${model.getDependsOnCount()})`),
-              model.dependencyTree.length === 0 && model.spinnerCount === 0 && h("span", {}, "No dependencies found")
+                title: "Show components this metadata requires to function",
+                role: "button",
+                tabIndex: 0,
+                onKeyDown: (e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    model.setFilter("dependsOn");
+                  }
+                }
+              }, `Depends On (${model.getDependsOnCount()})`)
+              ) : h("span", {
+                key: "dependsOn",
+                className: "slds-badge slds-badge_lightest",
+                onClick: () => model.setFilter("dependsOn"),
+                title: "Show components this metadata requires to function",
+                role: "button",
+                tabIndex: 0,
+                onKeyDown: (e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    model.setFilter("dependsOn");
+                  }
+                }
+              }, `Depends On (${model.getDependsOnCount()})`)
+              )
+              ),
+              model.dependencyTree.length === 0 && model.spinnerCount === 0 && h("span", {
+                className: "dep-section-subtitle"
+              }, "No dependencies found")
               )
             )
             ),
